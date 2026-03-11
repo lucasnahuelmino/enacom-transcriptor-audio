@@ -12,7 +12,12 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # CORS
-    CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    CORS_ORIGINS: list[str] = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5174",
+    "http://localhost:5174"
+]
     
     # Paths
     BASE_DIR: Path = Path(__file__).resolve().parent.parent

@@ -6,21 +6,6 @@ from typing import List, Dict, Any
 import shutil
 import datetime as dt
 
-from app.core.audio_processor import ffprobe_duration_seconds, split_audio_to_wavs
-from app.core.segmenter import (
-    build_fixed_windows_from_duration,
-    merge_text_into_fixed_windows,
-    clean_boilerplate
-)
-from app.core.exporters import (
-    generar_informe_word,
-    ensure_excel_file,
-    append_to_excel,
-    write_infracciones_excel
-)
-from app.core.infracciones import detectar_infracciones_en_texto
-from app.core.writers import write_txt, make_zip_bytes
-from app.core.utils import safe_stem, fmt_hhmmss, as_text
 from app.config import settings
 
 logger = logging.getLogger(__name__)

@@ -59,7 +59,7 @@ def handle_unsubscribe_task(data):
     emit('unsubscribed', {'task_id': task_id})
 
 
-d_emitter = None
+emitter = None
 
 def _get_emitter():
     global _emitter

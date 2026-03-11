@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import zipfile
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Iterable
@@ -11,6 +12,7 @@ from openpyxl import Workbook, load_workbook
 
 from app.core.paths import LOGO_PATH, ensure_dirs
 from app.core.utils import sec_to_hhmmss, fmt_hhmmss
+from app.core.writers import write_txt as _write_txt_to_file
 
 
 # =========================
@@ -50,7 +52,6 @@ def append_to_excel(
     headers: tuple[str, ...] = ("Inicio", "Fin", "Texto"),
 ) -> None:
     ensure_excel_file(xlsx_path, {sheet_name: headers})
-
     p = Path(xlsx_path)
     wb = load_workbook(str(p))
     ws = wb[sheet_name]
@@ -133,7 +134,6 @@ def _kv_table(doc: Document, rows: Iterable[tuple[str, str]]) -> None:
     hdr = table.rows[0].cells
     hdr[0].text = "Campo"
     hdr[1].text = "Valor"
-
     for k, v in rows:
         r = table.add_row().cells
         r[0].text = str(k)
@@ -150,7 +150,6 @@ def generar_informe_word(
     files_info: list[dict] | None = None,
 ) -> str:
     ensure_dirs()
-
     doc = _load_doc()
 
     _add_heading_safe(doc, "Transcriptor de audios a texto", level=1)
@@ -158,28 +157,19 @@ def generar_informe_word(
     doc.add_paragraph("")
 
     _add_heading_safe(doc, "Datos del procesamiento", level=2)
-
     generado = meta.get("generado") or dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # FIX 1: incluir Referencia/Nombre en la tabla de metadatos del informe Word.
     referencia = meta.get("referencia", "") or "—"
 
-    _kv_table(
-        doc,
-        [
-            ("Referencia / Nombre",   referencia),
-            ("Archivo / Lote",        titulo),
-            ("Generado",              generado),
-            ("Modelo Whisper",        meta.get("model_size", "")),
-            ("Idioma",                meta.get("lang", "auto") or "auto"),
-            ("Duración segmento (s)", meta.get("segment_duration", "")),
-            ("Cantidad de archivos",  meta.get("total_files", "")),
-            # FIX 2: total_duration_hhmmss ya viene calculado con dur_final desde
-            # processing.py — ahora refleja la duración real y no 00:00:00.
-            ("Duración total",        meta.get("total_duration_hhmmss", "")),
-        ],
-    )
-
+    _kv_table(doc, [
+        ("Referencia / Nombre",   referencia),
+        ("Archivo / Lote",        titulo),
+        ("Generado",              generado),
+        ("Modelo Whisper",        meta.get("model_size", "")),
+        ("Idioma",                meta.get("lang", "auto") or "auto"),
+        ("Duración segmento (s)", meta.get("segment_duration", "")),
+        ("Cantidad de archivos",  meta.get("total_files", "")),
+        ("Duración total",        meta.get("total_duration_hhmmss", "")),
+    ])
     doc.add_paragraph("")
 
     def _render_whisper_block(doc: Document, wr: dict) -> None:
@@ -192,14 +182,9 @@ def generar_informe_word(
             doc.add_paragraph("(No hay segmentos disponibles.)")
         else:
             for seg in segments:
-                # FIX 3: preferir la clave "line" que viene pre-formateada desde
-                # merge_text_into_fixed_windows (formato "[00:MM:SS - 00:MM:SS] texto").
-                # Esto evita que los timestamps aparezcan como floats crudos ("420.0")
-                # cuando se pasaban los segments_acc raw de Whisper.
                 if "line" in seg and seg["line"]:
                     doc.add_paragraph(str(seg["line"]))
                 else:
-                    # Fallback: segmentos raw de Whisper (float → HH:MM:SS con ceros).
                     ini = fmt_hhmmss(float(seg.get("start", 0) or 0))
                     fin = fmt_hhmmss(float(seg.get("end",   0) or 0))
                     txt = (seg.get("text", "") or "").strip() or "Silencio"
@@ -208,7 +193,6 @@ def generar_informe_word(
         doc.add_paragraph("")
         doc.add_paragraph("—" * 30)
         doc.add_paragraph("")
-
         _add_heading_safe(doc, "Transcripción completa", level=3)
 
         if full_text:
@@ -216,41 +200,32 @@ def generar_informe_word(
         else:
             doc.add_paragraph("(No hay texto completo disponible.)")
 
-    # Transcripción
     _add_heading_safe(doc, "Transcripción", level=2)
 
     if combinado:
         files_info = files_info or []
-
         if not files_info:
             doc.add_paragraph("(No hay archivos para mostrar.)")
         else:
             for i, info in enumerate(files_info):
                 if i > 0:
                     doc.add_page_break()
-
                 archivo = info.get("archivo", f"archivo_{i}")
                 dur     = info.get("duracion_hhmmss", "")
                 wr      = info.get("whisper_result")
-
                 _add_heading_safe(doc, f"{archivo} — Duración: {dur}", level=3)
-
                 if not wr:
                     doc.add_paragraph("(Sin transcripción disponible.)")
                     continue
-
                 _render_whisper_block(doc, wr)
-
     else:
         if not whisper_result:
             doc.add_paragraph("(No se recibió resultado de Whisper.)")
         else:
             _render_whisper_block(doc, whisper_result)
 
-    # Infracciones
     doc.add_page_break()
     _add_heading_safe(doc, "Infracciones detectadas", level=2)
-
     infracciones = infracciones or []
 
     if not infracciones:
@@ -261,13 +236,11 @@ def generar_informe_word(
             resumen[inf.get("archivo", "")][inf.get("termino", "")] += 1
 
         doc.add_paragraph("Resumen de ocurrencias por archivo y término.")
-
         t = doc.add_table(rows=1, cols=3)
         h = t.rows[0].cells
         h[0].text = "Archivo"
         h[1].text = "Término"
         h[2].text = "Ocurrencias"
-
         for archivo, c in resumen.items():
             for termino, n in c.most_common():
                 r = t.add_row().cells
@@ -277,7 +250,6 @@ def generar_informe_word(
 
         doc.add_paragraph("")
         doc.add_paragraph("Detalle:")
-
         t2 = doc.add_table(rows=1, cols=5)
         h2 = t2.rows[0].cells
         h2[0].text = "Archivo"
@@ -285,7 +257,6 @@ def generar_informe_word(
         h2[2].text = "Inicio"
         h2[3].text = "Fin"
         h2[4].text = "Texto"
-
         for inf in infracciones[:300]:
             r = t2.add_row().cells
             r[0].text = str(inf.get("archivo", ""))
@@ -297,104 +268,116 @@ def generar_informe_word(
     out = Path(docx_out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(out))
-
     return str(out)
 
-def write_combined_txt(txt_path: Path, resultados: list[dict], referencia: str, run_id: str):
-    """TXT combinado de todos los archivos"""
-    lines = []
-    lines.append(f"=== TRANSCRIPCIÓN COMBINADA ===")
-    lines.append(f"Referencia: {referencia or '—'}")
-    lines.append(f"Generado: {run_id}")
-    lines.append("")
-    
+
+# =========================
+# Exportadores combinados
+# =========================
+
+def write_combined_txt(txt_path: Path, resultados: list[dict], referencia: str, run_id: str) -> None:
+    lines = [
+        "=== TRANSCRIPCIÓN COMBINADA ===",
+        f"Referencia: {referencia or '—'}",
+        f"Generado: {run_id}",
+        "",
+    ]
     for r in resultados:
-        lines.append(f"\n{'='*60}")
-        lines.append(f"ARCHIVO: {r['archivo']}")
-        lines.append(f"Duración: {r['duracion_hhmmss']}")
-        lines.append(f"{'='*60}\n")
-        lines.append(r['texto_completo'])
-    
+        lines += [
+            f"\n{'='*60}",
+            f"ARCHIVO: {r['archivo']}",
+            f"Duración: {r['duracion_hhmmss']}",
+            f"{'='*60}\n",
+            r['texto_completo'],
+        ]
     txt_path.write_text("\n".join(lines), encoding="utf-8")
 
-def write_combined_xlsx(xlsx_path: Path, files_info: list[dict], infracciones: list[dict]):
-    """XLSX combinado con todos los archivos"""
+
+def write_combined_xlsx(xlsx_path: Path, files_info: list[dict], infracciones: list[dict]) -> None:
     ensure_excel_file(str(xlsx_path), {"Transcripción": ("Archivo", "Inicio", "Fin", "Texto")})
-    
     wb = load_workbook(str(xlsx_path))
     ws = wb["Transcripción"]
-    
     for info in files_info:
         wr = info.get("whisper_result", {})
         for seg in wr.get("segments", []):
+            line = seg.get("line", "")
+            parts = line.split("]")[0].replace("[", "").split(" - ") if "-" in line else ["", ""]
             ws.append([
                 info["archivo"],
-                seg.get("line", "").split("]")[0].replace("[", "").split("-")[0].strip(),
-                seg.get("line", "").split("]")[0].replace("[", "").split("-")[1].strip() if "-" in seg.get("line", "") else "",
-                seg.get("text", "")
+                parts[0].strip(),
+                parts[1].strip() if len(parts) > 1 else "",
+                seg.get("text", ""),
             ])
-    
-    write_infracciones_excel(str(xlsx_path), infracciones)
     wb.save(str(xlsx_path))
+    if infracciones:
+        write_infracciones_excel(str(xlsx_path), infracciones)
 
-def write_combined_docx(docx_path: Path, title: str, meta: dict, files_info: list[dict], infracciones: list[dict]):
-    """DOCX combinado"""
+
+def write_combined_docx(
+    docx_path: Path,
+    title: str,
+    meta: dict,
+    files_info: list[dict],
+    infracciones: list[dict],
+) -> None:
     generar_informe_word(
         titulo=title,
         docx_out_path=str(docx_path),
         combinado=True,
         meta=meta,
         files_info=files_info,
-        infracciones=infracciones
+        infracciones=infracciones,
     )
 
-def create_zip(zip_path: Path, output_dir: Path, resultados: list[dict], lote_urls: dict):
-    """Crea ZIP con todos los archivos"""
-    import zipfile
-    
+
+def create_zip(zip_path: Path, output_dir: Path, resultados: list[dict], lote_urls: dict) -> None:
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
         for r in resultados:
             for key in ['txt_url', 'xlsx_url', 'docx_url']:
                 url = r.get(key)
                 if url:
-                    filename = url.split('/')[-1]
-                    file_path = output_dir / filename
+                    file_path = output_dir / url.split('/')[-1]
                     if file_path.exists():
-                        zf.write(file_path, f"individuales/{filename}")
-        
+                        zf.write(file_path, f"individuales/{file_path.name}")
         for key in ['lote_txt_url', 'lote_xlsx_url', 'lote_docx_url']:
             url = lote_urls.get(key)
             if url:
-                filename = url.split('/')[-1]
-                file_path = output_dir / filename
+                file_path = output_dir / url.split('/')[-1]
                 if file_path.exists():
-                    zf.write(file_path, f"lote/{filename}")
+                    zf.write(file_path, f"lote/{file_path.name}")
 
 
-def write_txt(txt_path, title, full_text, segmented_items, infracciones_hits):
-    from app.core.writers import write_txt as _write_txt
-    from pathlib import Path
-    _write_txt(Path(txt_path), title, full_text, segmented_items, infracciones_hits)
+# =========================
+# Wrappers individuales
+# =========================
 
-def write_xlsx(xlsx_path, segmented_items, infracciones_hits):
+def write_txt(txt_path, title, full_text, segmented_items, infracciones_hits) -> None:
+    _write_txt_to_file(Path(txt_path), title, full_text, segmented_items, infracciones_hits)
+
+
+def write_xlsx(xlsx_path, segmented_items, infracciones_hits) -> None:
     ensure_excel_file(str(xlsx_path), {"Transcripción": ("Inicio", "Fin", "Texto")})
-    from openpyxl import load_workbook
     wb = load_workbook(str(xlsx_path))
     ws = wb["Transcripción"]
     for seg in segmented_items:
         line = seg.get("line", "")
         parts = line.split("]")[0].replace("[", "").split(" - ") if "]" in line else ["", ""]
-        ws.append([parts[0].strip(), parts[1].strip() if len(parts) > 1 else "", seg.get("text", "")])
+        ws.append([
+            parts[0].strip(),
+            parts[1].strip() if len(parts) > 1 else "",
+            seg.get("text", ""),
+        ])
     wb.save(str(xlsx_path))
     if infracciones_hits:
         write_infracciones_excel(str(xlsx_path), infracciones_hits)
 
-def write_docx(docx_path, title, meta, whisper_result, infracciones_hits):
+
+def write_docx(docx_path, title, meta, whisper_result, infracciones_hits) -> None:
     generar_informe_word(
         titulo=title,
         docx_out_path=str(docx_path),
         combinado=False,
         meta=meta,
         whisper_result=whisper_result,
-        infracciones=infracciones_hits
+        infracciones=infracciones_hits,
     )
