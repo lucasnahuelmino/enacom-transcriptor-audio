@@ -176,10 +176,8 @@ const filteredResults = computed(() => {
 })
 
 function getDownloadUrl(url) {
-  // Si la URL ya es absoluta, usarla directamente
   if (url.startsWith('http')) return url
-  
-  // Si es relativa, agregar el base URL del backend
-  return `http://localhost:5000${url}`
+  return url
 }
+
 </script>
