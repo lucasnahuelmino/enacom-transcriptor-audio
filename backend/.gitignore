@@ -1,0 +1,57 @@
+cat > .gitignore << 'EOF'
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Flask
+instance/
+.webassets-cache
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Environment variables
+.env
+.env.local
+
+# Outputs y temporales
+outputs/
+temp/
+uploads/
+*.wav
+*.mp3
+*.m4a
+*.flac
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Whisper models cache
+~/.cache/whisper/
+EOF

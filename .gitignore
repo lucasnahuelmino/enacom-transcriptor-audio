@@ -1,0 +1,11 @@
+cat > .gitignore << 'EOF'
+# Ver .gitignore específicos en backend/ y frontend/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+EOF
