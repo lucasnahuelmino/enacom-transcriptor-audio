@@ -369,3 +369,32 @@ def create_zip(zip_path: Path, output_dir: Path, resultados: list[dict], lote_ur
                 file_path = output_dir / filename
                 if file_path.exists():
                     zf.write(file_path, f"lote/{filename}")
+
+
+def write_txt(txt_path, title, full_text, segmented_items, infracciones_hits):
+    from app.core.writers import write_txt as _write_txt
+    from pathlib import Path
+    _write_txt(Path(txt_path), title, full_text, segmented_items, infracciones_hits)
+
+def write_xlsx(xlsx_path, segmented_items, infracciones_hits):
+    ensure_excel_file(str(xlsx_path), {"Transcripción": ("Inicio", "Fin", "Texto")})
+    from openpyxl import load_workbook
+    wb = load_workbook(str(xlsx_path))
+    ws = wb["Transcripción"]
+    for seg in segmented_items:
+        line = seg.get("line", "")
+        parts = line.split("]")[0].replace("[", "").split(" - ") if "]" in line else ["", ""]
+        ws.append([parts[0].strip(), parts[1].strip() if len(parts) > 1 else "", seg.get("text", "")])
+    wb.save(str(xlsx_path))
+    if infracciones_hits:
+        write_infracciones_excel(str(xlsx_path), infracciones_hits)
+
+def write_docx(docx_path, title, meta, whisper_result, infracciones_hits):
+    generar_informe_word(
+        titulo=title,
+        docx_out_path=str(docx_path),
+        combinado=False,
+        meta=meta,
+        whisper_result=whisper_result,
+        infracciones=infracciones_hits
+    )

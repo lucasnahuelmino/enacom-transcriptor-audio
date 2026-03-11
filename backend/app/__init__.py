@@ -30,6 +30,7 @@ def create_app():
         app,
         cors_allowed_origins=settings.CORS_ORIGINS,
         async_mode='threading',
+        message_queue=settings.REDIS_URL,
         logger=settings.DEBUG,
         engineio_logger=settings.DEBUG
     )

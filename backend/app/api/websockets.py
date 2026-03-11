@@ -1,6 +1,7 @@
 """
 WebSocket handlers para progreso en tiempo real
 """
+from flask import request
 from flask_socketio import emit, join_room, leave_room
 from app import socketio
 import logging
@@ -58,64 +59,36 @@ def handle_unsubscribe_task(data):
     emit('unsubscribed', {'task_id': task_id})
 
 
+d_emitter = None
+
+def _get_emitter():
+    global _emitter
+    if _emitter is None:
+        from flask_socketio import SocketIO
+        from app.config import settings
+        _emitter = SocketIO(message_queue=settings.REDIS_URL)
+    return _emitter
+
 def broadcast_progress(task_id: str, progress_data: dict):
-    """
-    Broadcast de progreso a todos los clientes suscritos a una tarea
-    
-    Esta función se llama desde las Celery tasks
-    
-    Args:
-        task_id: ID de la tarea
-        progress_data: Dict con campos como:
-            - progress: int (0-100)
-            - status: str
-            - current_file: str
-            - message: str
-            - segments: List[Dict]  # Transcripción en vivo
-            - infracciones: List[Dict]
-    """
-    socketio.emit(
+    _get_emitter().emit(
         'task_progress',
-        {
-            'task_id': task_id,
-            **progress_data
-        },
+        {'task_id': task_id, **progress_data},
         room=task_id,
         namespace='/'
     )
-    
-    logger.debug(f"Progress broadcast para tarea {task_id}: {progress_data.get('progress', 0)}%")
-
 
 def broadcast_completion(task_id: str, result_data: dict):
-    """
-    Notifica que una tarea se completó
-    """
-    socketio.emit(
+    _get_emitter().emit(
         'task_completed',
-        {
-            'task_id': task_id,
-            **result_data
-        },
+        {'task_id': task_id, **result_data},
         room=task_id,
         namespace='/'
     )
-    
-    logger.info(f"Tarea completada: {task_id}")
-
 
 def broadcast_error(task_id: str, error_message: str):
-    """
-    Notifica que una tarea falló
-    """
-    socketio.emit(
+    _get_emitter().emit(
         'task_error',
-        {
-            'task_id': task_id,
-            'error': error_message
-        },
+        {'task_id': task_id, 'error': error_message},
         room=task_id,
         namespace='/'
     )
-    
-    logger.error(f"Tarea fallida: {task_id} - {error_message}")
