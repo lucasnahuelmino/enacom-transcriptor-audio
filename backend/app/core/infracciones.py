@@ -22,6 +22,19 @@ def parse_infracciones_text(text: str) -> list[dict]:
 
     return out
 
+def detect_in_segments(filename: str, segments: list[dict], infracciones_cfg: list[dict], coincidencia_parcial: bool) -> list[dict]:
+    """Detecta infracciones en una lista de segmentos"""
+    hits = []
+    for seg in segments:
+        hits.extend(detectar_infracciones_en_texto(
+            filename,
+            seg.get('text', ''),
+            seg.get('line', '').split(']')[0].replace('[', '').split('-')[0].strip() if 'line' in seg else str(seg.get('start', '')),
+            seg.get('line', '').split(']')[0].replace('[', '').split('-')[1].strip() if 'line' in seg and '-' in seg['line'] else str(seg.get('end', '')),
+            infracciones_cfg,
+            coincidencia_parcial
+        ))
+    return hits
 
 def detectar_infracciones_en_texto(
     archivo: str,

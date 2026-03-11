@@ -138,3 +138,19 @@ def merge_text_into_fixed_windows(fixed_windows: List[Dict], segments: List[Dict
             }
         )
     return out
+
+def build_fixed_windows(duration_s: float, window_s: int) -> list[dict]:
+    """Alias para build_fixed_windows_from_duration"""
+    return build_fixed_windows_from_duration(duration_s, window_s)
+
+def merge_into_windows(fixed_windows: list[dict], segments: list[dict]) -> list[dict]:
+    """Alias para merge_text_into_fixed_windows"""
+    return merge_text_into_fixed_windows(fixed_windows, segments)
+
+def clean_text(text: str) -> str:
+    """Alias para clean_boilerplate"""
+    return clean_boilerplate(text)
+
+def format_duration(seconds: float) -> str:
+    """Formatea duración en HH:MM:SS"""
+    return sec_to_hhmmss(seconds)

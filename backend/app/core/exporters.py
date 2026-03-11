@@ -299,3 +299,73 @@ def generar_informe_word(
     doc.save(str(out))
 
     return str(out)
+
+def write_combined_txt(txt_path: Path, resultados: list[dict], referencia: str, run_id: str):
+    """TXT combinado de todos los archivos"""
+    lines = []
+    lines.append(f"=== TRANSCRIPCIÓN COMBINADA ===")
+    lines.append(f"Referencia: {referencia or '—'}")
+    lines.append(f"Generado: {run_id}")
+    lines.append("")
+    
+    for r in resultados:
+        lines.append(f"\n{'='*60}")
+        lines.append(f"ARCHIVO: {r['archivo']}")
+        lines.append(f"Duración: {r['duracion_hhmmss']}")
+        lines.append(f"{'='*60}\n")
+        lines.append(r['texto_completo'])
+    
+    txt_path.write_text("\n".join(lines), encoding="utf-8")
+
+def write_combined_xlsx(xlsx_path: Path, files_info: list[dict], infracciones: list[dict]):
+    """XLSX combinado con todos los archivos"""
+    ensure_excel_file(str(xlsx_path), {"Transcripción": ("Archivo", "Inicio", "Fin", "Texto")})
+    
+    wb = load_workbook(str(xlsx_path))
+    ws = wb["Transcripción"]
+    
+    for info in files_info:
+        wr = info.get("whisper_result", {})
+        for seg in wr.get("segments", []):
+            ws.append([
+                info["archivo"],
+                seg.get("line", "").split("]")[0].replace("[", "").split("-")[0].strip(),
+                seg.get("line", "").split("]")[0].replace("[", "").split("-")[1].strip() if "-" in seg.get("line", "") else "",
+                seg.get("text", "")
+            ])
+    
+    write_infracciones_excel(str(xlsx_path), infracciones)
+    wb.save(str(xlsx_path))
+
+def write_combined_docx(docx_path: Path, title: str, meta: dict, files_info: list[dict], infracciones: list[dict]):
+    """DOCX combinado"""
+    generar_informe_word(
+        titulo=title,
+        docx_out_path=str(docx_path),
+        combinado=True,
+        meta=meta,
+        files_info=files_info,
+        infracciones=infracciones
+    )
+
+def create_zip(zip_path: Path, output_dir: Path, resultados: list[dict], lote_urls: dict):
+    """Crea ZIP con todos los archivos"""
+    import zipfile
+    
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for r in resultados:
+            for key in ['txt_url', 'xlsx_url', 'docx_url']:
+                url = r.get(key)
+                if url:
+                    filename = url.split('/')[-1]
+                    file_path = output_dir / filename
+                    if file_path.exists():
+                        zf.write(file_path, f"individuales/{filename}")
+        
+        for key in ['lote_txt_url', 'lote_xlsx_url', 'lote_docx_url']:
+            url = lote_urls.get(key)
+            if url:
+                filename = url.split('/')[-1]
+                file_path = output_dir / filename
+                if file_path.exists():
+                    zf.write(file_path, f"lote/{filename}")

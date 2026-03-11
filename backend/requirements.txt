@@ -16,7 +16,7 @@ pydantic==2.5.3
 pydantic-settings==2.1.0
 
 # Transcripción - faster-whisper (mucho más rápido que openai-whisper)
-faster-whisper==1.0.0
+faster-whisper==1.1.1
 ctranslate2==4.0.0
 
 # Audio processing

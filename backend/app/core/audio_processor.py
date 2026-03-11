@@ -86,3 +86,11 @@ def try_read_audio_for_waveform(audio_path: str):
         return int(sr), data
     except Exception:
         return None, None
+
+def get_audio_duration(audio_path: Path) -> float:
+    """Alias para ffprobe_duration_seconds"""
+    return ffprobe_duration_seconds(audio_path) or 0.0
+
+def split_audio(audio_path: Path, output_dir: Path, segment_seconds: int) -> list[Path]:
+    """Alias para split_audio_to_wavs"""
+    return split_audio_to_wavs(audio_path, output_dir, segment_seconds)
