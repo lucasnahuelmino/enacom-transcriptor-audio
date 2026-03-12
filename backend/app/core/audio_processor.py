@@ -80,7 +80,7 @@ def split_audio_to_wavs(in_path: Path, out_dir: Path, segment_seconds: int):
 
 def try_read_audio_for_waveform(audio_path: str):
     try:
-        import soundfile as sf  # type: ignore
+        import soundfile as sf 
 
         data, sr = sf.read(audio_path, always_2d=False)
         return int(sr), data

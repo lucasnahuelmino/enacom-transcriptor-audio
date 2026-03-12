@@ -36,7 +36,6 @@ def handle_subscribe_task(data):
         emit('error', {'message': 'task_id requerido'})
         return
     
-    # Unirse a la room de esta tarea
     join_room(task_id)
     logger.info(f"Cliente {request.sid} suscrito a tarea {task_id}")
     

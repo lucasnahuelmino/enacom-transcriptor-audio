@@ -165,7 +165,6 @@ def get_history():
     try:
         outputs_dir = settings.OUTPUTS_DIR
 
-        # Agrupar archivos por subdirectorio (cada task tiene su propio dir)
         tasks: dict = {}
 
         for file_path in outputs_dir.glob('**/*'):
@@ -175,7 +174,6 @@ def get_history():
             if ext not in ['.txt', '.xlsx', '.docx', '.zip']:
                 continue
 
-            # Determinar task_id (nombre del subdirectorio padre)
             if file_path.parent == outputs_dir:
                 task_id = 'root'
                 rel_prefix = ''
@@ -188,9 +186,9 @@ def get_history():
                     'task_id': task_id,
                     'mtime': file_path.stat().st_mtime,
                     'size': 0,
-                    'ind_files': {},    # ext_key -> download URL (archivos individuales)
+                    'ind_files': {}, 
                     'zip_url': None,
-                    'stems': set(),     # para contar archivos únicos
+                    'stems': set(),  
                 }
 
             rel = f"{rel_prefix}{file_path.name}"
@@ -200,19 +198,18 @@ def get_history():
             tasks[task_id]['size'] += stat.st_size
             tasks[task_id]['mtime'] = max(tasks[task_id]['mtime'], stat.st_mtime)
 
-            stem = file_path.stem  # nombre sin extensión
+            stem = file_path.stem 
 
             if ext == '.zip':
                 tasks[task_id]['zip_url'] = f'/api/v1/download/{rel}'
             elif stem.startswith('lote_') or stem.startswith('corrida_'):
-                # Archivos de lote — asociar al zip, no los listamos individualmente
+
                 pass
             else:
-                # Archivo individual → guardar el primero de cada tipo
+
                 if ext_key not in tasks[task_id]['ind_files']:
                     tasks[task_id]['ind_files'][ext_key] = f'/api/v1/download/{rel}'
-                # Derivar nombre del audio: stem es algo como "grabacion_2024-01-01_120000"
-                # Quitamos la parte del run_id al final
+
                 clean_stem = _re.sub(r'_\d{4}-\d{2}-\d{2}_\d{6}$', '', stem)
                 tasks[task_id]['stems'].add(clean_stem or stem)
 
