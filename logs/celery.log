@@ -1,399 +1,63 @@
  
  -------------- celery@SNCTE39615 v5.3.4 (emerald-rush)
 --- ***** ----- 
--- ******* ---- Windows-11-10.0.26200-SP0 2026-03-12 14:47:46
+-- ******* ---- Windows-11-10.0.26200-SP0 2026-03-12 15:18:53
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         enacom_transcriptor:0x275930b1250
+- ** ---------- .> app:         enacom_transcriptor:0x1e1ad9fc5f0
 - ** ---------- .> transport:   redis://localhost:6379/0
 - ** ---------- .> results:     redis://localhost:6379/0
-- *** --- * --- .> concurrency: 2 (prefork)
+- *** --- * --- .> concurrency: 8 (solo)
 -- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
 --- ***** ----- 
  -------------- [queues]
                 .> celery           exchange=celery(direct) key=celery
                 
 
-[2026-03-12 14:47:46,729: WARNING/MainProcess] C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\consumer\consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+[tasks]
+  . process_transcription
+
+[2026-03-12 15:18:53,363: WARNING/MainProcess] C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\consumer\consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
 whether broker connection retries are made during startup in Celery 6.0 and above.
 If you wish to retain the existing behavior for retrying connections on startup,
 you should set broker_connection_retry_on_startup to True.
   warnings.warn(
 
-[2026-03-12 14:47:46,738: WARNING/MainProcess] C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\consumer\consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+[2026-03-12 15:18:53,368: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2026-03-12 15:18:53,368: WARNING/MainProcess] C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\consumer\consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
 whether broker connection retries are made during startup in Celery 6.0 and above.
 If you wish to retain the existing behavior for retrying connections on startup,
 you should set broker_connection_retry_on_startup to True.
   warnings.warn(
 
-[2026-03-12 14:47:47,857: ERROR/SpawnPoolWorker-1] Pool process <billiard.pool.Worker object at 0x000002C02033D1F0> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 115, in __enter__
-    return self._semlock.__enter__()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [WinError 5] Acceso denegado
+[2026-03-12 15:18:53,368: INFO/MainProcess] mingle: searching for neighbors
+[2026-03-12 15:18:54,392: WARNING/MainProcess] C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\app\control.py:56: DuplicateNodenameWarning: Received multiple replies from node name: celery@SNCTE39615.
+Please make sure you give each node a unique nodename using
+the celery worker `-n` option.
+  warnings.warn(DuplicateNodenameWarning(
 
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:47:47,855: ERROR/SpawnPoolWorker-2] Pool process <billiard.pool.Worker object at 0x0000023A81879580> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 115, in __enter__
-    return self._semlock.__enter__()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [WinError 5] Acceso denegado
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:47:47,857: ERROR/SpawnPoolWorker-1] Pool process <billiard.pool.Worker object at 0x000002C02033D1F0> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 115, in __enter__
-    return self._semlock.__enter__()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [WinError 5] Acceso denegado
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:47:47,855: ERROR/SpawnPoolWorker-2] Pool process <billiard.pool.Worker object at 0x0000023A81879580> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 115, in __enter__
-    return self._semlock.__enter__()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [WinError 5] Acceso denegado
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:47:48,030: ERROR/MainProcess] Process 'SpawnPoolWorker-2' pid:13300 exited with 'exitcode 1'
-[2026-03-12 14:47:48,030: ERROR/MainProcess] Process 'SpawnPoolWorker-1' pid:13204 exited with 'exitcode 1'
-[2026-03-12 14:47:49,230: ERROR/SpawnPoolWorker-3] Pool process <billiard.pool.Worker object at 0x000002C6A4ED93D0> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 115, in __enter__
-    return self._semlock.__enter__()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [WinError 5] Acceso denegado
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:47:49,230: ERROR/SpawnPoolWorker-3] Pool process <billiard.pool.Worker object at 0x000002C6A4ED93D0> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 115, in __enter__
-    return self._semlock.__enter__()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [WinError 5] Acceso denegado
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:47:49,350: ERROR/MainProcess] Process 'SpawnPoolWorker-3' pid:8940 exited with 'exitcode 1'
-[2026-03-12 14:48:48,927: ERROR/SpawnPoolWorker-5] Pool process <billiard.pool.Worker object at 0x0000022BC27FD1F0> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 118, in __exit__
-    return self._semlock.__exit__(*args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-OSError: [WinError 6] Controlador no válido
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:48:48,927: ERROR/SpawnPoolWorker-5] Pool process <billiard.pool.Worker object at 0x0000022BC27FD1F0> error: PermissionError(13, 'Acceso denegado', None, 5, None)
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 473, in receive
-    ready, req = _receive(1.0)
-                 ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 445, in _recv
-    return True, loads(get_payload())
-                       ^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\queues.py", line 394, in get_payload
-    with self._rlock:
-         ^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\synchronize.py", line 118, in __exit__
-    return self._semlock.__exit__(*args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-OSError: [WinError 6] Controlador no válido
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 351, in workloop
-    req = wait_for_job()
-          ^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 480, in receive
-    raise SystemExit(EX_FAILURE)
-SystemExit: 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 396, in workloop
-    self._ensure_messages_consumed(completed=completed)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\billiard\pool.py", line 406, in _ensure_messages_consumed
-    if self.on_ready_counter.value >= completed:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in getvalue
-PermissionError: [WinError 5] Acceso denegado
-[2026-03-12 14:48:49,414: ERROR/MainProcess] Process 'SpawnPoolWorker-5' pid:11716 exited with 'exitcode 1'
-[2026-03-12 14:57:45,998: WARNING/MainProcess] consumer: Connection to broker lost. Trying to re-establish the connection...
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\redis\connection.py", line 442, in send_packed_command
-    self._sock.sendall(item)
-ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\consumer\consumer.py", line 340, in start
-    blueprint.start(self)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\bootsteps.py", line 116, in start
-    step.start(parent)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\consumer\consumer.py", line 742, in start
-    c.loop(*c.loop_args())
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\loops.py", line 130, in synloop
-    connection.drain_events(timeout=2.0)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\kombu\connection.py", line 343, in drain_events
-    return self.transport.drain_events(self.connection, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\kombu\transport\virtual\base.py", line 997, in drain_events
-    get(self._deliver, timeout=timeout)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\kombu\transport\redis.py", line 601, in get
-    ret = self.handle_event(fileno, event)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\kombu\transport\redis.py", line 583, in handle_event
-    return self.on_readable(fileno), self
-           ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\kombu\transport\redis.py", line 579, in on_readable
-    chan.handlers[type]()
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\kombu\transport\redis.py", line 931, in _receive
-    ret.append(self._receive_one(c))
-               ^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\kombu\transport\redis.py", line 941, in _receive_one
-    response = c.parse_response()
-               ^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\redis\client.py", line 814, in parse_response
-    self.check_health()
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\redis\client.py", line 852, in check_health
-    conn.send_command("PING", self.HEALTH_CHECK_MESSAGE, check_health=False)
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\redis\connection.py", line 464, in send_command
-    self.send_packed_command(
-  File "C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\redis\connection.py", line 453, in send_packed_command
-    raise ConnectionError(f"Error {errno} while writing to socket. {errmsg}.")
-redis.exceptions.ConnectionError: Error 10054 while writing to socket. Se ha forzado la interrupción de una conexión existente por el host remoto.
-[2026-03-12 14:57:46,157: WARNING/MainProcess] Restoring 2 unacknowledged message(s)
-[2026-03-12 14:57:54,304: WARNING/MainProcess] C:\Users\SNCTE\Desktop\enacom-transcriptor-audio\backend\venv\Lib\site-packages\celery\worker\consumer\consumer.py:391: CPendingDeprecationWarning: 
-In Celery 5.1 we introduced an optional breaking change which
-on connection loss cancels all currently executed tasks with late acknowledgement enabled.
-These tasks cannot be acknowledged as the connection is gone, and the tasks are automatically redelivered
-back to the queue. You can enable this behavior using the worker_cancel_long_running_tasks_on_connection_loss
-setting. In Celery 5.1 it is set to False by default. The setting will be set to True by default in Celery 6.0.
-
-  warnings.warn(CANCEL_TASKS_BY_DEFAULT, CPendingDeprecationWarning)
-
+[2026-03-12 15:18:54,392: INFO/MainProcess] mingle: all alone
+[2026-03-12 15:18:54,409: INFO/MainProcess] celery@SNCTE39615 ready.
+[2026-03-12 15:19:29,615: INFO/MainProcess] Task process_transcription[81beb633-c16d-40ba-9bef-388fdb8c9a58] received
+[2026-03-12 15:19:30,614: INFO/MainProcess] Iniciando tarea 81beb633-c16d-40ba-9bef-388fdb8c9a58 con 1 archivos
+[2026-03-12 15:19:31,100: INFO/MainProcess] Cargando modelo faster-whisper: medium
+[2026-03-12 15:19:31,101: INFO/MainProcess] Dispositivo: cpu | compute_type: int8
+[2026-03-12 15:19:32,523: INFO/MainProcess] HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-medium/revision/main "HTTP/1.1 200 OK"
+[2026-03-12 15:19:41,366: INFO/MainProcess] Modelo 'medium' cargado exitosamente
+[2026-03-12 15:19:41,366: INFO/MainProcess] Cargando engine para modelo 'medium'…
+[2026-03-12 15:19:41,366: INFO/MainProcess] Cargando modelo faster-whisper: medium
+[2026-03-12 15:19:41,366: INFO/MainProcess] Dispositivo: cpu | compute_type: int8
+[2026-03-12 15:19:41,707: INFO/MainProcess] HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-medium/revision/main "HTTP/1.1 200 OK"
+[2026-03-12 15:19:49,042: INFO/MainProcess] Modelo 'medium' cargado exitosamente
+[2026-03-12 15:19:49,176: INFO/MainProcess] [1/1] Procesando 14-44_Hs_22-10-25.mp3
+[2026-03-12 15:19:51,826: INFO/MainProcess] Transcribiendo [medium]: seg_000000.wav
+[2026-03-12 15:19:52,094: INFO/MainProcess] Processing audio with duration 00:20.008
+[2026-03-12 15:19:52,679: INFO/MainProcess] VAD filter removed 00:03.344 of audio
+[2026-03-12 15:20:05,416: INFO/MainProcess] Completado [medium]: 2 segmentos, idioma: es
+[2026-03-12 15:20:05,477: INFO/MainProcess] Transcribiendo [medium]: seg_000001.wav
+[2026-03-12 15:20:05,543: INFO/MainProcess] Processing audio with duration 00:16.354
+[2026-03-12 15:20:05,677: INFO/MainProcess] VAD filter removed 00:13.570 of audio
+[2026-03-12 15:20:15,359: INFO/MainProcess] Completado [medium]: 3 segmentos, idioma: es
+[2026-03-12 15:20:15,709: INFO/MainProcess] [1/1] 14-44_Hs_22-10-25.mp3 completado
+[2026-03-12 15:20:15,777: INFO/MainProcess] Tarea 81beb633-c16d-40ba-9bef-388fdb8c9a58 completada exitosamente
+[2026-03-12 15:20:15,778: INFO/MainProcess] Task process_transcription[81beb633-c16d-40ba-9bef-388fdb8c9a58] succeeded in 46.15700000000652s: {'task_id': '81beb633-c16d-40ba-9bef-388fdb8c9a58', 'status': 'completed', 'created_at': '2026-03-12T15:20:15.776537', 'completed_at': '2026-03-12T15:20:15.776537', 'referencia': '1234', 'modo': 'individual', 'model_size': 'medium', 'language': 'es', 'total_files': 1, 'total_duration_hhmmss': '0:00:36', 'infracciones_total': 3, 'archivos_con_infracciones': 1, 'resultados': [{'archivo': '14-44_Hs_22-10-25.mp3', 'duracion_hhmmss': '0:00:36', 'audio_url': '/api/v1/audio/81beb633-c16d-40ba-9bef-388fdb8c9a58/14-44_Hs_22-10-25.mp3', 'txt_url': '/api/v1/download/81beb633-c16d-40ba-9bef-388fdb8c9a58/14-44_Hs_22-10-25_2026-03-12_151949.txt', 'xlsx_url': '/api/v1/download/81beb633-c16d-40ba-9bef-388fdb8c9a58/14-44_Hs_22-10-25_2026-03-12_151949.xlsx', 'docx_url': '/api/v1/download/81beb633-c16d-40ba-9bef-388fdb8c9a58/14-44_Hs_22-10-25_2026-03-12_151949.docx', 'infracciones': [...], 'segmentos': [...], 'texto_completo': 'sos un buchón, sos una porquería, o no sos un hombre, sos un sorete, porque el tipo que traiciona a...', ...]}
