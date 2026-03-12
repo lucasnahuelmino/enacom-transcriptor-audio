@@ -7,6 +7,8 @@ from pathlib import Path
 import logging
 import uuid
 import json
+import re as _re
+import datetime as _dt
 
 from app.config import settings
 from app.models.schemas import TranscriptionRequest
@@ -83,22 +85,17 @@ def upload_files():
 
 @api_bp.route('/audio/<task_id>/<filename>', methods=['GET'])
 def serve_audio(task_id: str, filename: str):
-    """
-    Sirve el archivo de audio original para reproducción en el frontend.
-    Los archivos se guardan en UPLOADS_DIR / task_id / filename.
-    """
+    """Sirve el archivo de audio original para reproducción en el frontend."""
     try:
         audio_dir = settings.UPLOADS_DIR / task_id
         file_path = audio_dir / filename
 
-        # Seguridad: verificar que el path está dentro de UPLOADS_DIR
         if not str(file_path.resolve()).startswith(str(settings.UPLOADS_DIR.resolve())):
             return jsonify({'error': 'Acceso denegado'}), 403
 
         if not file_path.exists():
             return jsonify({'error': 'Archivo no encontrado'}), 404
 
-        # Determinar MIME type
         ext = file_path.suffix.lower()
         mime_map = {
             '.mp3':  'audio/mpeg',
@@ -112,11 +109,7 @@ def serve_audio(task_id: str, filename: str):
         }
         mime = mime_map.get(ext, 'audio/mpeg')
 
-        return send_from_directory(
-            str(audio_dir),
-            filename,
-            mimetype=mime
-        )
+        return send_from_directory(str(audio_dir), filename, mimetype=mime)
 
     except Exception as e:
         logger.error(f"Error sirviendo audio: {str(e)}", exc_info=True)
@@ -171,42 +164,76 @@ def cancel_task(task_id: str):
 def get_history():
     try:
         outputs_dir = settings.OUTPUTS_DIR
-        files_by_base = {}
+
+        # Agrupar archivos por subdirectorio (cada task tiene su propio dir)
+        tasks: dict = {}
 
         for file_path in outputs_dir.glob('**/*'):
             if not file_path.is_file():
                 continue
-            if file_path.suffix.lower() not in ['.txt', '.xlsx', '.docx', '.zip']:
+            ext = file_path.suffix.lower()
+            if ext not in ['.txt', '.xlsx', '.docx', '.zip']:
                 continue
 
-            base_name = file_path.stem
-            ext = file_path.suffix.lstrip('.').lower()
+            # Determinar task_id (nombre del subdirectorio padre)
+            if file_path.parent == outputs_dir:
+                task_id = 'root'
+                rel_prefix = ''
+            else:
+                task_id = file_path.parent.name
+                rel_prefix = f"{task_id}/"
 
-            if base_name not in files_by_base:
-                files_by_base[base_name] = {
-                    'base_name': base_name,
+            if task_id not in tasks:
+                tasks[task_id] = {
+                    'task_id': task_id,
                     'mtime': file_path.stat().st_mtime,
                     'size': 0,
-                    'files': {}
+                    'ind_files': {},    # ext_key -> download URL (archivos individuales)
+                    'zip_url': None,
+                    'stems': set(),     # para contar archivos únicos
                 }
 
-            files_by_base[base_name]['files'][ext] = str(file_path)
-            files_by_base[base_name]['size'] += file_path.stat().st_size
-            files_by_base[base_name]['mtime'] = max(
-                files_by_base[base_name]['mtime'],
-                file_path.stat().st_mtime
-            )
+            rel = f"{rel_prefix}{file_path.name}"
+            ext_key = ext.lstrip('.')
+            stat = file_path.stat()
 
-        from datetime import datetime
+            tasks[task_id]['size'] += stat.st_size
+            tasks[task_id]['mtime'] = max(tasks[task_id]['mtime'], stat.st_mtime)
+
+            stem = file_path.stem  # nombre sin extensión
+
+            if ext == '.zip':
+                tasks[task_id]['zip_url'] = f'/api/v1/download/{rel}'
+            elif stem.startswith('lote_') or stem.startswith('corrida_'):
+                # Archivos de lote — asociar al zip, no los listamos individualmente
+                pass
+            else:
+                # Archivo individual → guardar el primero de cada tipo
+                if ext_key not in tasks[task_id]['ind_files']:
+                    tasks[task_id]['ind_files'][ext_key] = f'/api/v1/download/{rel}'
+                # Derivar nombre del audio: stem es algo como "grabacion_2024-01-01_120000"
+                # Quitamos la parte del run_id al final
+                clean_stem = _re.sub(r'_\d{4}-\d{2}-\d{2}_\d{6}$', '', stem)
+                tasks[task_id]['stems'].add(clean_stem or stem)
+
         history_items = []
-        for base_name, data in files_by_base.items():
-            tipo = 'LOTE' if base_name.startswith('lote_') else 'ZIP' if base_name.startswith('corrida_') else 'INDIVIDUAL'
+        for task_id, data in tasks.items():
+            stems = list(data['stems'])
+            referencia = ', '.join(s.replace('_', ' ')[:40] for s in stems[:3]) or task_id[:8]
+            tipo = 'LOTE' if len(stems) > 1 else 'INDIVIDUAL'
+
             history_items.append({
-                'base_name': base_name,
+                'task_id': task_id,
+                'referencia': referencia,
                 'tipo': tipo,
-                'fecha': datetime.fromtimestamp(data['mtime']).isoformat(),
+                'fecha': _dt.datetime.fromtimestamp(data['mtime']).isoformat(),
                 'tamaño_bytes': data['size'],
-                'archivos_disponibles': list(data['files'].keys())
+                'num_files': len(stems) or 1,
+                'archivos_disponibles': list(data['ind_files'].keys()),
+                'txt_url':  data['ind_files'].get('txt'),
+                'xlsx_url': data['ind_files'].get('xlsx'),
+                'docx_url': data['ind_files'].get('docx'),
+                'zip_url':  data['zip_url'],
             })
 
         history_items.sort(key=lambda x: x['fecha'], reverse=True)
@@ -220,7 +247,6 @@ def get_history():
 @api_bp.route('/download/<path:filename>', methods=['GET'])
 def download_file(filename: str):
     try:
-        # filename puede ser "task_id/archivo.txt"
         file_path = settings.OUTPUTS_DIR / filename
 
         if not file_path.exists():
