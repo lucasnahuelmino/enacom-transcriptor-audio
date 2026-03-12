@@ -1,0 +1,184 @@
+Server initialized for threading.
+2026-03-12 14:47:46,666 - engineio.server - INFO - Server initialized for threading.
+2026-03-12 14:47:46,955 - __main__ - INFO - Iniciando servidor ENACOM Transcriptor Backend...
+2026-03-12 14:47:46,955 - __main__ - INFO - Modo debug: True
+2026-03-12 14:47:46,955 - __main__ - INFO - CORS origins: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5174', 'http://localhost:5174']
+2026-03-12 14:47:46,955 - __main__ - INFO - Modelo Whisper: medium
+2026-03-12 14:47:46,955 - __main__ - INFO - Dispositivo: auto
+ * Serving Flask app 'app'
+ * Debug mode: on
+2026-03-12 14:47:46,983 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.50.228:5000
+2026-03-12 14:47:46,986 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-03-12 14:47:46,986 - werkzeug - INFO -  * Restarting with stat
+Server initialized for threading.
+2026-03-12 14:47:47,873 - engineio.server - INFO - Server initialized for threading.
+2026-03-12 14:47:48,206 - __main__ - INFO - Iniciando servidor ENACOM Transcriptor Backend...
+2026-03-12 14:47:48,206 - __main__ - INFO - Modo debug: True
+2026-03-12 14:47:48,206 - __main__ - INFO - CORS origins: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5174', 'http://localhost:5174']
+2026-03-12 14:47:48,206 - __main__ - INFO - Modelo Whisper: medium
+2026-03-12 14:47:48,206 - __main__ - INFO - Dispositivo: auto
+2026-03-12 14:47:48,218 - werkzeug - WARNING -  * Debugger is active!
+2026-03-12 14:47:48,218 - werkzeug - INFO -  * Debugger PIN: 213-157-280
+2026-03-12 14:48:39,414 - werkzeug - INFO - 127.0.0.1 - - [12/Mar/2026 14:48:39] "GET /api/v1/history HTTP/1.1" 200 -
+2026-03-12 14:48:39,434 - werkzeug - INFO - 127.0.0.1 - - [12/Mar/2026 14:48:39] "GET /api/v1/history HTTP/1.1" 200 -
+ThtitoW2-gPNpjlJAAAA: Sending packet OPEN data {'sid': 'ThtitoW2-gPNpjlJAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2026-03-12 14:48:39,688 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet OPEN data {'sid': 'ThtitoW2-gPNpjlJAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+redis backend initialized.
+2026-03-12 14:48:39,688 - socketio.server - INFO - redis backend initialized.
+ThtitoW2-gPNpjlJAAAA: Received request to upgrade to websocket
+2026-03-12 14:48:39,688 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received request to upgrade to websocket
+ThtitoW2-gPNpjlJAAAA: Upgrade to websocket successful
+2026-03-12 14:48:39,691 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Upgrade to websocket successful
+ThtitoW2-gPNpjlJAAAA: Received packet MESSAGE data 0
+2026-03-12 14:48:39,704 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet MESSAGE data 0
+2026-03-12 14:48:39,708 - app.api.websockets - INFO - Cliente conectado: tJr_aSN8vij6tg2UAAAB
+emitting event "connected" to tJr_aSN8vij6tg2UAAAB [/]
+2026-03-12 14:48:39,708 - socketio.server - INFO - emitting event "connected" to tJr_aSN8vij6tg2UAAAB [/]
+ThtitoW2-gPNpjlJAAAA: Sending packet MESSAGE data 2["connected",{"message":"Conectado al servidor de transcripci\u00f3n"}]
+2026-03-12 14:48:39,708 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet MESSAGE data 2["connected",{"message":"Conectado al servidor de transcripci\u00f3n"}]
+ThtitoW2-gPNpjlJAAAA: Sending packet MESSAGE data 0{"sid":"tJr_aSN8vij6tg2UAAAB"}
+2026-03-12 14:48:39,708 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet MESSAGE data 0{"sid":"tJr_aSN8vij6tg2UAAAB"}
+2026-03-12 14:48:48,839 - app.api.routes - INFO - Archivo guardado: 14-44_Hs_22-10-25.mp3 (0.28MB)
+2026-03-12 14:48:48,839 - celery.utils.functional - DEBUG - 
+def process_transcription_task(self, task_id, audio_files, config):
+    return 1
+
+2026-03-12 14:48:48,905 - werkzeug - INFO - 127.0.0.1 - - [12/Mar/2026 14:48:48] "[35m[1mPOST /api/v1/transcription/upload HTTP/1.1[0m" 202 -
+ThtitoW2-gPNpjlJAAAA: Received packet MESSAGE data 2["subscribe_task",{"task_id":"d468fcfa-7f41-49ab-a740-2ea7c1f7a468"}]
+2026-03-12 14:48:48,905 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet MESSAGE data 2["subscribe_task",{"task_id":"d468fcfa-7f41-49ab-a740-2ea7c1f7a468"}]
+received event "subscribe_task" from tJr_aSN8vij6tg2UAAAB [/]
+2026-03-12 14:48:48,920 - socketio.server - INFO - received event "subscribe_task" from tJr_aSN8vij6tg2UAAAB [/]
+tJr_aSN8vij6tg2UAAAB is entering room d468fcfa-7f41-49ab-a740-2ea7c1f7a468 [/]
+2026-03-12 14:48:48,921 - socketio.server - INFO - tJr_aSN8vij6tg2UAAAB is entering room d468fcfa-7f41-49ab-a740-2ea7c1f7a468 [/]
+2026-03-12 14:48:48,921 - app.api.websockets - INFO - Cliente tJr_aSN8vij6tg2UAAAB suscrito a tarea d468fcfa-7f41-49ab-a740-2ea7c1f7a468
+emitting event "subscribed" to tJr_aSN8vij6tg2UAAAB [/]
+2026-03-12 14:48:48,921 - socketio.server - INFO - emitting event "subscribed" to tJr_aSN8vij6tg2UAAAB [/]
+ThtitoW2-gPNpjlJAAAA: Sending packet MESSAGE data 2["subscribed",{"task_id":"d468fcfa-7f41-49ab-a740-2ea7c1f7a468","message":"Suscrito a tarea d468fcfa-7f41-49ab-a740-2ea7c1f7a468"}]
+2026-03-12 14:48:48,921 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet MESSAGE data 2["subscribed",{"task_id":"d468fcfa-7f41-49ab-a740-2ea7c1f7a468","message":"Suscrito a tarea d468fcfa-7f41-49ab-a740-2ea7c1f7a468"}]
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:49:04,689 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:49:04,689 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:49:29,691 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:49:29,691 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:49:54,693 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:49:54,693 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:50:19,695 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:50:19,695 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:50:44,698 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:50:44,698 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:51:09,699 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:51:09,699 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:51:34,701 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:51:34,701 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+2026-03-12 14:51:59,703 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Sending packet PING data None
+ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:51:59,704 - engineio.server - INFO - ThtitoW2-gPNpjlJAAAA: Received packet PONG data 
+2026-03-12 14:52:18,179 - app.api.websockets - INFO - Cliente desconectado: tJr_aSN8vij6tg2UAAAB
+2026-03-12 14:52:18,398 - werkzeug - INFO - 127.0.0.1 - - [12/Mar/2026 14:52:18] "GET /api/v1/history HTTP/1.1" 200 -
+2026-03-12 14:52:18,508 - werkzeug - INFO - 127.0.0.1 - - [12/Mar/2026 14:52:18] "GET /api/v1/history HTTP/1.1" 200 -
+ifD4_-2cYJpVYhYDAAAC: Sending packet OPEN data {'sid': 'ifD4_-2cYJpVYhYDAAAC', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2026-03-12 14:52:18,669 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet OPEN data {'sid': 'ifD4_-2cYJpVYhYDAAAC', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+ifD4_-2cYJpVYhYDAAAC: Received request to upgrade to websocket
+2026-03-12 14:52:18,669 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received request to upgrade to websocket
+ifD4_-2cYJpVYhYDAAAC: Upgrade to websocket successful
+2026-03-12 14:52:18,673 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Upgrade to websocket successful
+ifD4_-2cYJpVYhYDAAAC: Received packet MESSAGE data 0
+2026-03-12 14:52:18,678 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet MESSAGE data 0
+2026-03-12 14:52:18,678 - app.api.websockets - INFO - Cliente conectado: MnM8UAJ8RdyET920AAAD
+emitting event "connected" to MnM8UAJ8RdyET920AAAD [/]
+2026-03-12 14:52:18,678 - socketio.server - INFO - emitting event "connected" to MnM8UAJ8RdyET920AAAD [/]
+ifD4_-2cYJpVYhYDAAAC: Sending packet MESSAGE data 2["connected",{"message":"Conectado al servidor de transcripci\u00f3n"}]
+2026-03-12 14:52:18,678 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet MESSAGE data 2["connected",{"message":"Conectado al servidor de transcripci\u00f3n"}]
+ifD4_-2cYJpVYhYDAAAC: Sending packet MESSAGE data 0{"sid":"MnM8UAJ8RdyET920AAAD"}
+2026-03-12 14:52:18,679 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet MESSAGE data 0{"sid":"MnM8UAJ8RdyET920AAAD"}
+2026-03-12 14:52:35,069 - app.api.routes - INFO - Archivo guardado: 14-44_Hs_22-10-25.mp3 (0.28MB)
+2026-03-12 14:52:35,078 - werkzeug - INFO - 127.0.0.1 - - [12/Mar/2026 14:52:35] "[35m[1mPOST /api/v1/transcription/upload HTTP/1.1[0m" 202 -
+ifD4_-2cYJpVYhYDAAAC: Received packet MESSAGE data 2["subscribe_task",{"task_id":"29c912ba-9b76-46e0-b6ea-eb43ad20c27a"}]
+2026-03-12 14:52:35,087 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet MESSAGE data 2["subscribe_task",{"task_id":"29c912ba-9b76-46e0-b6ea-eb43ad20c27a"}]
+received event "subscribe_task" from MnM8UAJ8RdyET920AAAD [/]
+2026-03-12 14:52:35,087 - socketio.server - INFO - received event "subscribe_task" from MnM8UAJ8RdyET920AAAD [/]
+MnM8UAJ8RdyET920AAAD is entering room 29c912ba-9b76-46e0-b6ea-eb43ad20c27a [/]
+2026-03-12 14:52:35,088 - socketio.server - INFO - MnM8UAJ8RdyET920AAAD is entering room 29c912ba-9b76-46e0-b6ea-eb43ad20c27a [/]
+2026-03-12 14:52:35,088 - app.api.websockets - INFO - Cliente MnM8UAJ8RdyET920AAAD suscrito a tarea 29c912ba-9b76-46e0-b6ea-eb43ad20c27a
+emitting event "subscribed" to MnM8UAJ8RdyET920AAAD [/]
+2026-03-12 14:52:35,088 - socketio.server - INFO - emitting event "subscribed" to MnM8UAJ8RdyET920AAAD [/]
+ifD4_-2cYJpVYhYDAAAC: Sending packet MESSAGE data 2["subscribed",{"task_id":"29c912ba-9b76-46e0-b6ea-eb43ad20c27a","message":"Suscrito a tarea 29c912ba-9b76-46e0-b6ea-eb43ad20c27a"}]
+2026-03-12 14:52:35,088 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet MESSAGE data 2["subscribed",{"task_id":"29c912ba-9b76-46e0-b6ea-eb43ad20c27a","message":"Suscrito a tarea 29c912ba-9b76-46e0-b6ea-eb43ad20c27a"}]
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:52:43,671 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:52:43,671 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:53:08,673 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:53:08,673 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:53:33,675 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:53:33,675 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:53:58,677 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:53:58,677 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:54:23,679 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:54:23,679 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:54:48,681 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:54:48,681 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:55:13,683 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:55:13,683 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:55:38,685 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:55:38,687 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:56:03,688 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:56:03,688 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:56:28,690 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:56:28,691 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:56:53,692 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:56:53,692 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:57:18,694 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:57:18,694 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:57:43,696 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:57:43,696 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:57:45,998 - socketio - ERROR - Cannot receive from redis... retrying in 1 secs
+2026-03-12 14:57:51,069 - socketio - ERROR - Cannot receive from redis... retrying in 2 secs
+2026-03-12 14:57:57,139 - socketio - ERROR - Cannot receive from redis... retrying in 4 secs
+2026-03-12 14:58:05,218 - socketio - ERROR - Cannot receive from redis... retrying in 8 secs
+ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+2026-03-12 14:58:08,698 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Sending packet PING data None
+ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:58:08,698 - engineio.server - INFO - ifD4_-2cYJpVYhYDAAAC: Received packet PONG data 
+2026-03-12 14:58:17,300 - socketio - ERROR - Cannot receive from redis... retrying in 16 secs
