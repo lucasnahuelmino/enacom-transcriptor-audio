@@ -1,183 +1,121 @@
 <template>
-  <div class="card animate-fadeInUp">
-    <div class="flex items-center justify-between mb-6">
+  <div class="animate-fadeInUp">
+
+    <!-- ── Top bar ── -->
+    <div class="flex items-center justify-between mb-5">
       <div class="flex items-center gap-3">
         <span class="text-2xl">📥</span>
-        <h2 class="text-lg font-bold text-enacom-blue-dark">
-          Descargas disponibles
-        </h2>
+        <div>
+          <h2 class="text-lg font-bold text-enacom-blue-dark">Resultados</h2>
+          <p class="text-sm text-gray-500">{{ store.resultados.length }} archivo(s) procesado(s)</p>
+        </div>
       </div>
-      
       <button
         @click="$emit('clear')"
-        class="btn-secondary text-red-600 hover:bg-red-50"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-red-300
+               hover:bg-red-50 text-red-600 text-sm font-semibold rounded-lg transition-all"
       >
         🧹 Limpiar resultados
       </button>
     </div>
-    
-    <!-- Métricas -->
-    <div v-if="store.runMeta" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-      <div class="bg-gray-50 rounded-lg p-4 border-t-2 border-enacom-blue-main">
-        <p class="text-xs text-gray-600 font-bold uppercase mb-1">Modo</p>
-        <p class="text-lg font-black text-enacom-blue-dark">
-          {{ store.runMeta.modo }}
-        </p>
-      </div>
-      
-      <div class="bg-gray-50 rounded-lg p-4 border-t-2 border-enacom-blue-main">
-        <p class="text-xs text-gray-600 font-bold uppercase mb-1">Modelo</p>
-        <p class="text-lg font-black text-enacom-blue-dark">
-          {{ store.runMeta.model_size }}
-        </p>
-      </div>
-      
-      <div class="bg-gray-50 rounded-lg p-4 border-t-2 border-enacom-blue-main">
-        <p class="text-xs text-gray-600 font-bold uppercase mb-1">Referencia</p>
-        <p class="text-lg font-black text-enacom-blue-dark truncate">
-          {{ store.runMeta.referencia || '—' }}
-        </p>
-      </div>
-      
-      <div class="bg-gray-50 rounded-lg p-4 border-t-2 border-enacom-blue-main">
-        <p class="text-xs text-gray-600 font-bold uppercase mb-1">Duración</p>
-        <p class="text-lg font-black text-enacom-blue-dark">
-          {{ store.runMeta.total_duration_hhmmss }}
-        </p>
-      </div>
-      
-      <div class="bg-gray-50 rounded-lg p-4 border-t-2 border-enacom-blue-main">
-        <p class="text-xs text-gray-600 font-bold uppercase mb-1">Infracciones</p>
-        <p class="text-lg font-black text-enacom-blue-dark">
-          {{ store.runMeta.infracciones_total }}
-          <span class="text-sm text-gray-500">
-            ({{ store.runMeta.archivos_con_infracciones }} arch.)
-          </span>
-        </p>
+
+    <!-- ── Run meta ── -->
+    <div v-if="store.runMeta" class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+      <div v-for="m in metaItems" :key="m.label"
+           class="bg-white rounded-lg border border-gray-200 px-4 py-3 border-t-2 border-t-enacom-blue-main">
+        <p class="text-xs text-gray-500 font-bold uppercase tracking-wide mb-1">{{ m.label }}</p>
+        <p class="text-base font-black text-enacom-blue-dark truncate">{{ m.value }}</p>
       </div>
     </div>
-    
-    <!-- Lote (si existe) -->
-    <div v-if="store.loteResult" class="mb-6">
-      <h3 class="font-bold text-gray-700 mb-3">📦 Lote consolidado</h3>
-      <div class="grid grid-cols-3 gap-3">
-        <a
-          v-if="store.loteResult.txt"
-          :href="getDownloadUrl(store.loteResult.txt)"
-          download
-          class="btn-secondary text-center"
-        >
-          📝 TXT (Lote)
-        </a>
-        <a
-          v-if="store.loteResult.xlsx"
-          :href="getDownloadUrl(store.loteResult.xlsx)"
-          download
-          class="btn-secondary text-center"
-        >
-          📊 XLSX (Lote)
-        </a>
-        <a
-          v-if="store.loteResult.docx"
-          :href="getDownloadUrl(store.loteResult.docx)"
-          download
-          class="btn-secondary text-center"
-        >
-          📄 DOCX (Lote)
-        </a>
-      </div>
-    </div>
-    
-    <!-- Archivos individuales -->
-    <div v-if="store.resultados.length > 0">
-      <h3 class="font-bold text-gray-700 mb-3">
-        🎧 Archivos individuales ({{ store.resultados.length }})
-      </h3>
-      
-      <!-- Filtro -->
-      <input
-        v-model="filter"
-        type="text"
-        placeholder="Filtrar por nombre..."
-        class="input mb-4"
-      />
-      
-      <!-- Lista -->
-      <div class="space-y-3">
-        <div
-          v-for="(item, index) in filteredResults"
-          :key="index"
-          class="bg-gray-50 rounded-lg p-4 border border-gray-200"
-        >
-          <p class="font-bold text-gray-800 mb-3">{{ item.archivo }}</p>
-          
-          <div class="grid grid-cols-4 gap-2">
-            <a
-              v-if="item.txt_url"
-              :href="getDownloadUrl(item.txt_url)"
-              download
-              class="btn-secondary text-sm text-center"
-            >
-              📝 TXT
-            </a>
-            <a
-              v-if="item.xlsx_url"
-              :href="getDownloadUrl(item.xlsx_url)"
-              download
-              class="btn-secondary text-sm text-center"
-            >
-              📊 XLSX
-            </a>
-            <a
-              v-if="item.docx_url"
-              :href="getDownloadUrl(item.docx_url)"
-              download
-              class="btn-secondary text-sm text-center"
-            >
-              📄 DOCX
-            </a>
-            <button class="btn-secondary text-sm">
-              📦 ZIP
-            </button>
+
+    <!-- ── Per-file AudioCards ── -->
+    <AudioCard
+      v-for="(result, i) in store.resultados"
+      :key="result.archivo + i"
+      :result="result"
+    />
+
+    <!-- ── Lote (combined) downloads ── -->
+    <div v-if="store.loteResult"
+         class="mt-6 bg-white rounded-enacom border-2 border-enacom-blue-main overflow-hidden">
+      <div class="bg-gradient-to-r from-enacom-blue-dark to-enacom-blue-main px-6 py-4">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">📦</span>
+          <div>
+            <h3 class="font-bold text-white">Informe combinado (lote)</h3>
+            <p class="text-sm text-white/70">Todos los archivos en un único informe</p>
           </div>
         </div>
       </div>
+      <div class="px-6 py-5 flex items-center gap-3 flex-wrap">
+        <a
+          v-if="store.loteResult.txt"
+          :href="store.loteResult.txt"
+          download
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300
+                 hover:border-enacom-blue-main hover:bg-enacom-blue-soft
+                 text-gray-700 font-semibold rounded-lg transition-all"
+        >
+          📝 TXT combinado
+        </a>
+        <a
+          v-if="store.loteResult.xlsx"
+          :href="store.loteResult.xlsx"
+          download
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300
+                 hover:border-enacom-blue-main hover:bg-enacom-blue-soft
+                 text-gray-700 font-semibold rounded-lg transition-all"
+        >
+          📊 XLSX combinado
+        </a>
+        <a
+          v-if="store.loteResult.docx"
+          :href="store.loteResult.docx"
+          download
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300
+                 hover:border-enacom-blue-main hover:bg-enacom-blue-soft
+                 text-gray-700 font-semibold rounded-lg transition-all"
+        >
+          📄 DOCX combinado
+        </a>
+      </div>
     </div>
-    
-    <!-- ZIP completo -->
-    <div v-if="store.runZipUrl" class="mt-6 pt-6 border-t-2 border-gray-200">
+
+    <!-- ── ZIP completo ── -->
+    <div v-if="store.runZipUrl" class="mt-4">
       <a
-        :href="getDownloadUrl(store.runZipUrl)"
+        :href="store.runZipUrl"
         download
-        class="btn-primary w-full text-center block"
+        class="flex items-center justify-center gap-3 w-full py-3.5
+               bg-gradient-to-r from-enacom-blue-dark to-enacom-blue-main
+               hover:from-enacom-blue-main hover:to-enacom-blue-mid
+               text-white font-bold rounded-enacom shadow-enacom-blue
+               transition-all hover:-translate-y-0.5 hover:shadow-lg"
       >
         📦 Descargar transcripción completa (ZIP)
       </a>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useTranscriptionStore } from '@/stores/transcription'
+import AudioCard from '@/components/AudioCard.vue'
 
 defineEmits(['clear'])
 
 const store = useTranscriptionStore()
-const filter = ref('')
 
-const filteredResults = computed(() => {
-  if (!filter.value) return store.resultados
-  
-  const q = filter.value.toLowerCase()
-  return store.resultados.filter(r => 
-    r.archivo.toLowerCase().includes(q)
-  )
+const metaItems = computed(() => {
+  if (!store.runMeta) return []
+  return [
+    { label: 'Modo',        value: store.runMeta.modo },
+    { label: 'Modelo',      value: store.runMeta.model_size },
+    { label: 'Referencia',  value: store.runMeta.referencia || '—' },
+    { label: 'Duración',    value: store.runMeta.total_duration_hhmmss },
+    { label: 'Infracciones',value: `${store.runMeta.infracciones_total} (${store.runMeta.archivos_con_infracciones} arch.)` },
+  ]
 })
-
-function getDownloadUrl(url) {
-  if (url.startsWith('http')) return url
-  return url
-}
-
 </script>

@@ -8,7 +8,6 @@ from enum import Enum
 
 
 class LanguageEnum(str, Enum):
-    """Idiomas soportados"""
     SPANISH = "es"
     ENGLISH = "en"
     PORTUGUESE = "pt"
@@ -16,29 +15,31 @@ class LanguageEnum(str, Enum):
 
 
 class ModoLoteEnum(str, Enum):
-    """Modo de generación de informe"""
     INDIVIDUAL = "individual"
     COMBINADO = "combinado"
 
 
+class WhisperModelEnum(str, Enum):
+    MEDIUM = "medium"
+    LARGE_V3 = "large-v3"
+
+
 class TranscriptionRequest(BaseModel):
-    """Request para iniciar transcripción"""
-    referencia: Optional[str] = Field(None, max_length=200, description="Nombre o referencia del expediente")
-    language: LanguageEnum = Field(LanguageEnum.SPANISH, description="Idioma del audio")
-    modo_lote: ModoLoteEnum = Field(ModoLoteEnum.INDIVIDUAL, description="Modo de informe")
-    export_zip: bool = Field(True, description="Generar ZIP con todos los archivos")
-    infracciones: List[str] = Field(default_factory=list, description="Términos de infracción")
-    coincidencia_parcial: bool = Field(True, description="Buscar coincidencias parciales")
-    
+    referencia: Optional[str] = Field(None, max_length=200)
+    language: LanguageEnum = Field(LanguageEnum.SPANISH)
+    modo_lote: ModoLoteEnum = Field(ModoLoteEnum.INDIVIDUAL)
+    export_zip: bool = Field(True)
+    infracciones: List[str] = Field(default_factory=list)
+    coincidencia_parcial: bool = Field(True)
+    whisper_model: WhisperModelEnum = Field(WhisperModelEnum.MEDIUM, description="Modelo Whisper a usar")
+
     @field_validator('infracciones')
     @classmethod
     def validate_infracciones(cls, v):
-        # Limpiar y deduplicar
         return list(set([term.strip().lower() for term in v if term.strip()]))
 
 
 class TaskStatusEnum(str, Enum):
-    """Estados de una tarea"""
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"
@@ -47,7 +48,6 @@ class TaskStatusEnum(str, Enum):
 
 
 class TaskProgressUpdate(BaseModel):
-    """Actualización de progreso vía WebSocket"""
     task_id: str
     status: TaskStatusEnum
     progress: int = Field(0, ge=0, le=100)
@@ -59,26 +59,24 @@ class TaskProgressUpdate(BaseModel):
 
 
 class SegmentResponse(BaseModel):
-    """Segmento de transcripción"""
     start: float
     end: float
     text: str
-    line: str  # Formato: "[HH:MM:SS - HH:MM:SS] texto"
+    line: str
 
 
 class InfractionResponse(BaseModel):
-    """Infracción detectada"""
     archivo: str
     termino: str
-    inicio: str  # HH:MM:SS
-    fin: str     # HH:MM:SS
+    inicio: str
+    fin: str
     texto: str
 
 
 class FileResultResponse(BaseModel):
-    """Resultado de transcripción de un archivo"""
     archivo: str
     duracion_hhmmss: str
+    audio_url: Optional[str] = None
     txt_url: Optional[str] = None
     xlsx_url: Optional[str] = None
     docx_url: Optional[str] = None
@@ -88,13 +86,12 @@ class FileResultResponse(BaseModel):
 
 
 class TranscriptionResultResponse(BaseModel):
-    """Respuesta completa de una tarea de transcripción"""
+    model_config = {'protected_namespaces': ()}
+
     task_id: str
     status: TaskStatusEnum
     created_at: datetime
     completed_at: Optional[datetime] = None
-    
-    # Metadatos
     referencia: Optional[str] = None
     modo: ModoLoteEnum
     model_size: str
@@ -103,33 +100,25 @@ class TranscriptionResultResponse(BaseModel):
     total_duration_hhmmss: str
     infracciones_total: int
     archivos_con_infracciones: int
-    
-    # Resultados individuales
     resultados: List[FileResultResponse] = []
-    
-    # Lote (si modo_lote == combinado)
     lote_txt_url: Optional[str] = None
     lote_xlsx_url: Optional[str] = None
     lote_docx_url: Optional[str] = None
-    
-    # ZIP completo
     zip_url: Optional[str] = None
-    
-    # Error (si falló)
     error_message: Optional[str] = None
 
 
 class HistoryItemResponse(BaseModel):
-    """Item del historial"""
     base_name: str
-    tipo: str  # "LOTE", "INDIVIDUAL", "ZIP"
+    tipo: str
     fecha: datetime
     tamaño_bytes: int
-    archivos_disponibles: List[str]  # ["txt", "xlsx", "docx", "zip"]
+    archivos_disponibles: List[str]
 
 
 class HealthResponse(BaseModel):
-    """Health check response"""
+    model_config = {'protected_namespaces': ()}
+
     status: str
     service: str
     whisper_model_loaded: bool

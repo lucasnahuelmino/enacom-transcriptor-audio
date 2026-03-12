@@ -7,7 +7,7 @@
         Configuración del procesamiento
       </h2>
     </div>
-    
+
     <!-- Upload de archivos -->
     <div class="mb-6">
       <label class="label">Archivos de audio</label>
@@ -17,8 +17,8 @@
         @dragleave.prevent="isDragging = false"
         :class="[
           'border-2 border-dashed rounded-enacom p-8 text-center transition-all cursor-pointer',
-          isDragging 
-            ? 'border-enacom-blue-main bg-enacom-blue-soft' 
+          isDragging
+            ? 'border-enacom-blue-main bg-enacom-blue-soft'
             : 'border-gray-300 hover:border-enacom-blue-main hover:bg-gray-50'
         ]"
         @click="$refs.fileInput.click()"
@@ -31,7 +31,7 @@
           @change="handleFileSelect"
           class="hidden"
         />
-        
+
         <div v-if="selectedFiles.length === 0">
           <div class="text-4xl mb-3">📁</div>
           <p class="text-gray-600 font-semibold mb-1">
@@ -41,10 +41,13 @@
             MP3, WAV, M4A, OGG, FLAC, AAC, Opus, WebM (máx 500MB)
           </p>
         </div>
-        
+
         <div v-else class="space-y-2">
-          <div v-for="(file, index) in selectedFiles" :key="index" 
-               class="flex items-center justify-between bg-white px-4 py-2 rounded-lg border border-gray-200">
+          <div
+            v-for="(file, index) in selectedFiles"
+            :key="index"
+            class="flex items-center justify-between bg-white px-4 py-2 rounded-lg border border-gray-200"
+          >
             <div class="flex items-center gap-3">
               <span class="text-xl">🎵</span>
               <div class="text-left">
@@ -59,7 +62,7 @@
               ✕
             </button>
           </div>
-          
+
           <button
             @click.stop="selectedFiles = []"
             class="text-sm text-red-600 hover:text-red-800 font-semibold mt-2"
@@ -68,12 +71,12 @@
           </button>
         </div>
       </div>
-      
+
       <p v-if="selectedFiles.length > 0" class="mt-2 text-sm font-semibold text-enacom-blue-dark">
         📂 {{ selectedFiles.length }} archivo(s) seleccionado(s) — {{ formatTotalSize }}
       </p>
     </div>
-    
+
     <!-- Configuración en 3 columnas -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <!-- Referencia -->
@@ -87,7 +90,7 @@
         />
         <p class="text-xs text-gray-500 mt-1">Se usará como identificador en informes</p>
       </div>
-      
+
       <!-- Idioma -->
       <div>
         <label class="label">Idioma del audio</label>
@@ -98,7 +101,7 @@
           <option value="auto">🌍 Detección automática</option>
         </select>
       </div>
-      
+
       <!-- Modo lote -->
       <div>
         <label class="label">Informe final</label>
@@ -126,7 +129,7 @@
             Combinado
           </button>
         </div>
-        
+
         <!-- Toggle ZIP -->
         <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
           <span class="text-lg">📦</span>
@@ -139,7 +142,58 @@
         </div>
       </div>
     </div>
-    
+
+    <!-- ── Modelo Whisper ─────────────────────────────────── -->
+    <div class="mb-6">
+      <label class="label">Modelo Whisper</label>
+      <div class="grid grid-cols-2 gap-3">
+
+        <!-- Medium -->
+        <button
+          @click="config.whisper_model = 'medium'"
+          :class="[
+            'relative text-left p-4 rounded-enacom border-2 transition-all',
+            config.whisper_model === 'medium'
+              ? 'border-enacom-blue-main bg-enacom-blue-soft'
+              : 'border-gray-200 bg-white hover:border-gray-300'
+          ]"
+        >
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-enacom-blue-dark">Medium</span>
+            <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">Recomendado</span>
+          </div>
+          <p class="text-xs text-gray-500">~1.5 GB · Rápido · Preciso</p>
+          <div v-if="config.whisper_model === 'medium'"
+               class="absolute top-3 right-3 w-4 h-4 bg-enacom-blue-main rounded-full flex items-center justify-center">
+            <span class="text-white text-xs">✓</span>
+          </div>
+        </button>
+
+        <!-- Large -->
+        <button
+          @click="config.whisper_model = 'large-v3'"
+          :class="[
+            'relative text-left p-4 rounded-enacom border-2 transition-all',
+            config.whisper_model === 'large-v3'
+              ? 'border-enacom-blue-main bg-enacom-blue-soft'
+              : 'border-gray-200 bg-white hover:border-gray-300'
+          ]"
+        >
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-enacom-blue-dark">Large v3</span>
+            <span class="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">Alta precisión</span>
+          </div>
+          <p class="text-xs text-gray-500">~3 GB · Más lento · Máxima calidad</p>
+          <div v-if="config.whisper_model === 'large-v3'"
+               class="absolute top-3 right-3 w-4 h-4 bg-enacom-blue-main rounded-full flex items-center justify-center">
+            <span class="text-white text-xs">✓</span>
+          </div>
+        </button>
+
+      </div>
+
+    </div>
+
     <!-- Infracciones -->
     <div class="mb-6">
       <label class="label">Detección de infracciones</label>
@@ -153,7 +207,7 @@
         Ejemplo: put, pelotud, bolud, forr, conch, etc.
       </p>
     </div>
-    
+
     <!-- Botón procesar -->
     <button
       @click="handleStart"
@@ -189,6 +243,7 @@ const config = ref({
   language: 'es',
   modo_lote: 'individual',
   export_zip: true,
+  whisper_model: 'medium',
   infracciones_raw: 'put, pelotud, bolud, forr, conch, cornud, cag, mierd, cul, soret, gil, garc, tarad, imbécil, imbecil, idiota, estupid, inutil, pija, pijoter, mogolic, retrasad, animal, besti, ostia, caraj, chup, jodet, cretin, maric, trol, pajer, salam, otari, panch, zarpad',
   coincidencia_parcial: true
 })
@@ -210,18 +265,14 @@ function handleFileSelect(event) {
 function handleDrop(event) {
   isDragging.value = false
   const files = Array.from(event.dataTransfer.files)
-  
-  // Filtrar solo formatos soportados
   const supportedFormats = ['.mp3', '.wav', '.m4a', '.ogg', '.flac', '.aac', '.opus', '.webm']
   const validFiles = files.filter(file => {
     const ext = '.' + file.name.split('.').pop().toLowerCase()
     return supportedFormats.includes(ext)
   })
-  
   if (validFiles.length < files.length) {
     alert(`Se ignoraron ${files.length - validFiles.length} archivo(s) con formato no soportado`)
   }
-  
   selectedFiles.value.push(...validFiles)
 }
 
@@ -231,8 +282,6 @@ function removeFile(index) {
 
 function handleStart() {
   if (!canStart.value) return
-  
-  // Preparar configuración
   const configToSend = {
     ...config.value,
     infracciones: config.value.infracciones_raw
@@ -240,7 +289,6 @@ function handleStart() {
       .map(t => t.trim())
       .filter(Boolean)
   }
-  
   emit('start', {
     files: selectedFiles.value,
     config: configToSend
