@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from pydantic_settings import BaseSettings
 from typing import Optional
@@ -27,7 +26,7 @@ class Settings(BaseSettings):
     ASSETS_DIR: Path = BASE_DIR / "assets"
     
     # Whisper
-    WHISPER_MODEL: str = "medium"  # tiny, base, small, medium, large-v2, large-v3
+    WHISPER_MODEL: str = "large-v3"
     WHISPER_DEVICE: str = "auto"  # auto, cpu, cuda
     WHISPER_COMPUTE_TYPE: str = "float16"  # float16, int8, int8_float16
     
@@ -45,7 +44,8 @@ class Settings(BaseSettings):
     
     # Limits
     MAX_CONCURRENT_TASKS: int = 2
-    TASK_TIMEOUT_SECONDS: int = 3600  # 1 hora
+    # Sin límite de tiempo — las transcripciones pueden durar horas
+    TASK_TIMEOUT_SECONDS: Optional[int] = None
     
     class Config:
         env_file = ".env"

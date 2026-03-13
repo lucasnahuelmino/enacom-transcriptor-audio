@@ -20,7 +20,6 @@ class ModoLoteEnum(str, Enum):
 
 
 class WhisperModelEnum(str, Enum):
-    MEDIUM = "medium"
     LARGE_V3 = "large-v3"
 
 
@@ -31,7 +30,7 @@ class TranscriptionRequest(BaseModel):
     export_zip: bool = Field(True)
     infracciones: List[str] = Field(default_factory=list)
     coincidencia_parcial: bool = Field(True)
-    whisper_model: WhisperModelEnum = Field(WhisperModelEnum.MEDIUM, description="Modelo Whisper a usar")
+    whisper_model: WhisperModelEnum = Field(WhisperModelEnum.LARGE_V3, description="Modelo Whisper a usar")
 
     @field_validator('infracciones')
     @classmethod

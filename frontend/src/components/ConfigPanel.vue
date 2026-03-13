@@ -146,52 +146,18 @@
     <!-- ── Modelo Whisper ─────────────────────────────────── -->
     <div class="mb-6">
       <label class="label">Modelo Whisper</label>
-      <div class="grid grid-cols-2 gap-3">
-
-        <!-- Medium -->
-        <button
-          @click="config.whisper_model = 'medium'"
-          :class="[
-            'relative text-left p-4 rounded-enacom border-2 transition-all',
-            config.whisper_model === 'medium'
-              ? 'border-enacom-blue-main bg-enacom-blue-soft'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          ]"
-        >
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-bold text-enacom-blue-dark">Medium</span>
-            <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">Recomendado</span>
-          </div>
-          <p class="text-xs text-gray-500">~1.5 GB · Rápido · Preciso</p>
-          <div v-if="config.whisper_model === 'medium'"
-               class="absolute top-3 right-3 w-4 h-4 bg-enacom-blue-main rounded-full flex items-center justify-center">
-            <span class="text-white text-xs">✓</span>
-          </div>
-        </button>
-
-        <!-- Large -->
-        <button
-          @click="config.whisper_model = 'large-v3'"
-          :class="[
-            'relative text-left p-4 rounded-enacom border-2 transition-all',
-            config.whisper_model === 'large-v3'
-              ? 'border-enacom-blue-main bg-enacom-blue-soft'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          ]"
-        >
-          <div class="flex items-center justify-between mb-1">
+      <div class="flex items-center gap-4 p-4 rounded-enacom border-2 border-enacom-blue-main bg-enacom-blue-soft">
+        <div class="w-5 h-5 bg-enacom-blue-main rounded-full flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-xs">✓</span>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-0.5">
             <span class="font-bold text-enacom-blue-dark">Large v3</span>
-            <span class="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">Alta precisión</span>
+            <span class="text-xs px-2 py-0.5 bg-enacom-blue-main text-white rounded-full font-bold">Máxima precisión</span>
           </div>
-          <p class="text-xs text-gray-500">~3 GB · Más lento · Máxima calidad</p>
-          <div v-if="config.whisper_model === 'large-v3'"
-               class="absolute top-3 right-3 w-4 h-4 bg-enacom-blue-main rounded-full flex items-center justify-center">
-            <span class="text-white text-xs">✓</span>
-          </div>
-        </button>
-
+          <p class="text-xs text-gray-500">~3 GB · Motor CTranslate2 · Mejor calidad disponible</p>
+        </div>
       </div>
-
     </div>
 
     <!-- Infracciones -->
@@ -243,7 +209,7 @@ const config = ref({
   language: 'es',
   modo_lote: 'individual',
   export_zip: true,
-  whisper_model: 'medium',
+  whisper_model: 'large-v3',
   infracciones_raw: 'put, pelotud, bolud, forr, conch, cornud, cag, mierd, cul, soret, gil, garc, tarad, imbécil, imbecil, idiota, estupid, inutil, pija, pijoter, mogolic, retrasad, animal, besti, ostia, caraj, chup, jodet, cretin, maric, trol, pajer, salam, otari, panch, zarpad',
   coincidencia_parcial: true
 })
