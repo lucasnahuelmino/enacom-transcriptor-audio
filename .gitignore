@@ -9,4 +9,6 @@ Thumbs.db
 .vscode/
 .idea/
 EOF
-*.log
+*.logs
+logs/
+faster-whisper-*/

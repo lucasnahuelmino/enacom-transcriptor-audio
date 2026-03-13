@@ -12,6 +12,33 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+_MODELS_DIR   = _PROJECT_ROOT / "tools" / "models"
+
+_LOCAL_MODEL_DIRS: Dict[str, Path] = {
+    "large":    _MODELS_DIR / "faster-whisper-large",
+    "large-v3": _MODELS_DIR / "faster-whisper-large",
+    "medium":   _MODELS_DIR / "faster-whisper-medium",
+}
+
+
+def _resolve_model_path(model_size: str) -> str:
+    """
+    Devuelve la ruta local al modelo si existe en tools/models/,
+    o el nombre original para que faster-whisper lo descargue.
+    """
+    local_path = _LOCAL_MODEL_DIRS.get(model_size.lower())
+    if local_path and local_path.is_dir():
+        logger.info(f"Modelo encontrado localmente: {local_path}")
+        return str(local_path)
+
+    logger.warning(
+        f"Modelo '{model_size}' no encontrado en {_MODELS_DIR}. "
+        f"Se descargará desde HuggingFace."
+    )
+    return model_size
+
+
 class TranscriptionEngine:
     """
     Wrapper para faster-whisper.
@@ -38,12 +65,15 @@ class TranscriptionEngine:
         compute_type = settings.WHISPER_COMPUTE_TYPE if device == "cuda" else "int8"
         logger.info(f"Dispositivo: {device} | compute_type: {compute_type}")
 
+        # Resuelve ruta local; si no existe, usa el nombre para descarga remota
+        model_path_or_name = _resolve_model_path(self._model_size)
+
         self._model = WhisperModel(
-            self._model_size,
+            model_path_or_name,
             device=device,
             compute_type=compute_type,
             download_root=None,
-            local_files_only=False
+            local_files_only=Path(model_path_or_name).is_dir()  # True solo si es ruta local
         )
         logger.info(f"Modelo '{self._model_size}' cargado exitosamente")
 
