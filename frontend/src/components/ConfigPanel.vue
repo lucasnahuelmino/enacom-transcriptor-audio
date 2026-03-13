@@ -152,10 +152,10 @@
         </div>
         <div class="flex-1">
           <div class="flex items-center gap-2 mb-0.5">
-            <span class="font-bold text-enacom-blue-dark">Large v3</span>
+            <span class="font-bold text-enacom-blue-dark">Large</span>
             <span class="text-xs px-2 py-0.5 bg-enacom-blue-main text-white rounded-full font-bold">Máxima precisión</span>
           </div>
-          <p class="text-xs text-gray-500">~3 GB · Motor CTranslate2 · Mejor calidad disponible</p>
+          <p class="text-xs text-gray-500">Mejor calidad de transcripción</p>
         </div>
       </div>
     </div>

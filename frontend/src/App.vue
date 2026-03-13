@@ -20,7 +20,7 @@
         />
         <button
           @click="handleCancel"
-          class="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5
+          class="absolute top-30 right-1 inline-flex items-center gap-1.5 px-3 py-1.5
                  bg-red-50 border border-red-300 hover:bg-red-100
                  text-red-600 text-sm font-semibold rounded-lg transition-all"
           title="Cancelar transcripción"
