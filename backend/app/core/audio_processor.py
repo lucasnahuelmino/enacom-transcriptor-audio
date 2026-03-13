@@ -3,12 +3,80 @@ from __future__ import annotations
 import shutil
 import subprocess
 from pathlib import Path
+import logging
+import sys
+import os
+
+logger = logging.getLogger(__name__)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Prioridad de búsqueda de ffmpeg:
+# 1. tools/ffmpeg/bin/ffmpeg (portable local)
+# 2. PATH del sistema
+# ─────────────────────────────────────────────────────────────────────────────
+
+def get_ffmpeg_path() -> str:
+
+    # Opción 1: Buscar en tools/ffmpeg (portable local)
+    project_root = Path(__file__).resolve().parent.parent.parent.parent
+    local_ffmpeg = project_root / "tools" / "ffmpeg" / "bin"
+    
+    if sys.platform == "win32":
+        ffmpeg_exe = local_ffmpeg / "ffmpeg.exe"
+    else:
+        ffmpeg_exe = local_ffmpeg / "ffmpeg"
+    
+    if ffmpeg_exe.exists():
+        logger.info(f"Using portable ffmpeg: {ffmpeg_exe}")
+        return str(ffmpeg_exe)
+    
+    # Opción 2: Buscar en PATH del sistema
+    ffmpeg_path = shutil.which("ffmpeg")
+    if ffmpeg_path:
+        logger.info(f"Using system ffmpeg: {ffmpeg_path}")
+        return ffmpeg_path
+    
+    # No encontrado
+    logger.warning("ffmpeg not found in tools/ffmpeg or system PATH")
+    return "ffmpeg"  # Intentará ejecutar ffmpeg del PATH de todas formas
+
+
+def get_ffprobe_path() -> str:
+    """
+    Obtiene la ruta a ffprobe con siguiente prioridad:
+    1. tools/ffmpeg/bin/ffprobe (portable local)
+    2. ffprobe en PATH del sistema
+    """
+    # Opción 1: Buscar en tools/ffmpeg (portable local)
+    project_root = Path(__file__).resolve().parent.parent.parent.parent
+    local_ffprobe = project_root / "tools" / "ffmpeg" / "bin"
+    
+    if sys.platform == "win32":
+        ffprobe_exe = local_ffprobe / "ffprobe.exe"
+    else:
+        ffprobe_exe = local_ffprobe / "ffprobe"
+    
+    if ffprobe_exe.exists():
+        logger.info(f"Using portable ffprobe: {ffprobe_exe}")
+        return str(ffprobe_exe)
+    
+    # Opción 2: Buscar en PATH del sistema
+    ffprobe_path = shutil.which("ffprobe")
+    if ffprobe_path:
+        logger.info(f"Using system ffprobe: {ffprobe_path}")
+        return ffprobe_path
+    
+    # No encontrado
+    logger.warning("ffprobe not found in tools/ffmpeg or system PATH")
+    return "ffprobe"
 
 
 def ffprobe_duration_seconds(audio_path: Path):
-    ffprobe = shutil.which("ffprobe")
-    if not ffprobe:
+    ffprobe = get_ffprobe_path()
+    
+    if not Path(ffprobe).exists() and ffprobe != "ffprobe":
         return None
+    
     try:
         cmd = [
             ffprobe,
@@ -36,12 +104,21 @@ def split_audio_to_wavs(in_path: Path, out_dir: Path, segment_seconds: int):
 
     segment_seconds = max(10, min(120, segment_seconds))
 
-    ffmpeg = shutil.which("ffmpeg")
-    if not ffmpeg:
-        return [in_path]
+    ffmpeg = get_ffmpeg_path()
+    
+    # Verificar que ffmpeg existe
+    if not Path(ffmpeg).exists() and ffmpeg != "ffmpeg":
+        logger.warning(f"ffmpeg not found at {ffmpeg}, trying system PATH")
+        ffmpeg = shutil.which("ffmpeg") or "ffmpeg"
+    
+    if not Path(ffmpeg).exists() if ffmpeg != "ffmpeg" else True:
+        if ffmpeg == "ffmpeg":
+            logger.warning("ffmpeg not found in PATH, returning original file without splitting")
+            return [in_path]
 
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Limpiar segmentos previos
     for p in out_dir.glob("seg_*.wav"):
         try:
             p.unlink()
@@ -70,12 +147,40 @@ def split_audio_to_wavs(in_path: Path, out_dir: Path, segment_seconds: int):
     ]
 
     try:
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-    except Exception:
+        # ✅ Capturar stderr para saber si ffmpeg falló
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False
+        )
+        
+        if result.returncode != 0:
+            logger.error(
+                f"ffmpeg segmentation failed for {in_path.name}\n"
+                f"Command: {' '.join(cmd)}\n"
+                f"stderr: {result.stderr}\n"
+                f"stdout: {result.stdout}"
+            )
+            return [in_path]
+            
+        # Buscar segmentos creados
+        segs = sorted(out_dir.glob("seg_*.wav"))
+        
+        if not segs:
+            logger.warning(
+                f"ffmpeg did not create segments for {in_path.name}, "
+                f"returning original file"
+            )
+            return [in_path]
+        
+        logger.info(f"Successfully split {in_path.name} into {len(segs)} segments")
+        return segs
+        
+    except Exception as e:
+        logger.error(f"Unexpected error during ffmpeg segmentation: {str(e)}")
         return [in_path]
-
-    segs = sorted(out_dir.glob("seg_*.wav"))
-    return segs if segs else [in_path]
 
 
 def try_read_audio_for_waveform(audio_path: str):

@@ -12,3 +12,9 @@ EOF
 *.logs
 logs/
 faster-whisper-*/
+
+# RAR backups
+*.rar
+
+# FFmpeg portable (en tools/ffmpeg/bin/)
+tools/ffmpeg/
