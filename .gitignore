@@ -1,6 +1,3 @@
-cat > .gitignore << 'EOF'
-# Ver .gitignore específicos en backend/ y frontend/
-
 # Archivos de sistema
 .DS_Store
 Thumbs.db
@@ -8,9 +5,12 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
-EOF
-*.logs
+
+# Logs
+*.log
 logs/
+
+# Modelos Whisper descargados
 faster-whisper-*/
 
 # RAR backups
@@ -18,3 +18,13 @@ faster-whisper-*/
 
 # FFmpeg portable (en tools/ffmpeg/bin/)
 tools/ffmpeg/
+
+# Redis
+dump.rdb
+
+# Inno Setup output
+setup/
+Output/
+
+# Assets de compilación (no subir al repo)
+redist/

@@ -17,4 +17,4 @@ app.use(createPinia())
 // Montar app
 app.mount('#app')
 
-console.log('🎧 ENACOM Transcriptor v3.0 iniciado')
+console.log('🎧 ENACOM Transcriptor de audios iniciado')

@@ -13,7 +13,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Crear app
 app = create_app()
 
 if __name__ == '__main__':
@@ -22,8 +21,7 @@ if __name__ == '__main__':
     logger.info(f"CORS origins: {settings.CORS_ORIGINS}")
     logger.info(f"Modelo Whisper: {settings.WHISPER_MODEL}")
     logger.info(f"Dispositivo: {settings.WHISPER_DEVICE}")
-    
-    # Ejecutar con SocketIO
+
     socketio.run(
         app,
         host='0.0.0.0',

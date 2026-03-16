@@ -23,7 +23,6 @@ celery_app.conf.update(
     timezone='America/Argentina/Buenos_Aires',
     enable_utc=True,
     task_track_started=True,
-    # Sin límite de tiempo — transcripciones largas pueden durar horas
     task_time_limit=None,
     task_soft_time_limit=None,
     worker_prefetch_multiplier=1,

@@ -18,15 +18,14 @@
       </div>
       
       <!-- Derecha: Badge de versión + Logo -->
-      <div class="flex flex-col items-end gap-2.5">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-white/75 uppercase tracking-wider bg-white/12 border border-white/20 rounded-full">
-          <span class="w-1.5 h-1.5 bg-green-400 rounded-full shadow-glow-green"></span>
-          v3.0
-        </span>
-        
+      <div class="flex  items-end gap-1">      
         <!-- Logo ENACOM -->
-        <div class="h-14 flex items-center">
-          <span class="text-xl font-black text-white/88 tracking-widest">ENACOM</span>
+        <div class="h-14 flex items-center justify-end">
+          <img 
+            src="/logo_enacom.png" 
+            alt="ENACOM - Ente Nacional de Comunicaciones"
+            class="h-12 object-contain filter drop-shadow-lg hover:drop-shadow-xl transition-all duration-200"
+          />
         </div>
       </div>
     </div>

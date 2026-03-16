@@ -1,4 +1,4 @@
-# 🎧 ENACOM Transcriptor v3.0
+# 🎧 ENACOM Transcriptor de audios
 
 Sistema institucional de transcripción automática de audio a texto, desarrollado para la **Dirección Nacional de Control y Fiscalización de ENACOM**.
 

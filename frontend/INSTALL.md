@@ -1,4 +1,4 @@
-# 🚀 Guía de Instalación - ENACOM Transcriptor v3.0 Frontend
+# 🚀 Guía de Instalación - ENACOM Transcriptor de audios Frontend
 
 ## 📋 Requisitos previos
 
