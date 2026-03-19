@@ -23,8 +23,10 @@ tools/ffmpeg/
 dump.rdb
 
 # Inno Setup output
-setup/
+
 Output/
 
 # Assets de compilación (no subir al repo)
 redist/
+tools/
+

@@ -1,79 +1,68 @@
 @echo off
 chcp 65001 >nul 2>&1
-title ENACOM Transcriptor de audios — Iniciando...
+title ENACOM Transcriptor v3.0
 
 cd /d "%~dp0"
+set "ROOT=%~dp0"
+set "BACKEND=%ROOT%backend"
+set "FRONTEND=%ROOT%frontend"
 
 echo.
 echo ============================================================
-echo   ENACOM Transcriptor de audios — Iniciando servicios
+echo   ENACOM Transcriptor v3.0
 echo ============================================================
 echo.
 
-:: ── Verificar instalacion previa ─────────────────────────────────
-if not exist "%~dp0backend\venv\Scripts\activate.bat" (
-    echo   [ERROR] No se encontro el entorno virtual.
-    echo   Ejecutar INSTALAR.bat primero.
+:: Verificar instalacion
+if not exist "%BACKEND%\venv\Scripts\activate.bat" (
+    echo [ERROR] Entorno virtual no encontrado.
+    echo Reinstalar la aplicacion con el instalador.
     echo.
     pause
     exit /b 1
 )
 
-if not exist "%~dp0frontend\node_modules" (
-    echo   [ERROR] No se encontraron las dependencias Node.js.
-    echo   Ejecutar INSTALAR.bat primero.
+if not exist "%FRONTEND%\node_modules" (
+    echo [ERROR] Dependencias Node.js no encontradas.
+    echo Reinstalar la aplicacion con el instalador.
     echo.
     pause
     exit /b 1
 )
 
-:: ── 1. Redis ──────────────────────────────────────────────────────
-echo [1/4] Iniciando Redis...
-if exist "%~dp0tools\redis\redis-server.exe" (
-    start "Redis - ENACOM" /min /d "%~dp0tools\redis" redis-server.exe
-) else (
-    echo   [AVISO] redis-server.exe no encontrado en tools\redis\
-    echo   Asegurarse de que Redis esta corriendo manualmente.
-)
-timeout /t 2 /nobreak >nul
-echo        OK
+:: Crear carpeta de logs si no existe
+if not exist "%ROOT%logs" mkdir "%ROOT%logs"
 
-:: ── 2. Celery worker ─────────────────────────────────────────────
-echo [2/4] Iniciando Celery worker...
-start "Celery - ENACOM" /d "%~dp0backend" cmd /k "venv\Scripts\activate && celery -A celery_worker.celery_app worker --loglevel=info --pool=solo"
-timeout /t 3 /nobreak >nul
-echo        OK
+echo Iniciando servicios en segundo plano...
+echo Los logs se guardan en la carpeta "logs\"
+echo.
 
-:: ── 3. Flask backend ─────────────────────────────────────────────
-echo [3/4] Iniciando backend Flask...
-start "Backend - ENACOM" /d "%~dp0backend" cmd /k "venv\Scripts\activate && python run.py"
-timeout /t 3 /nobreak >nul
-echo        OK
+:: Lanzar todo oculto via VBScript
+cscript //nologo "%ROOT%iniciar-servicios.vbs" "%ROOT%"
 
-:: ── 4. Frontend Vite ─────────────────────────────────────────────
-echo [4/4] Iniciando frontend...
-start "Frontend - ENACOM" /d "%~dp0frontend" cmd /k "npm run dev"
-timeout /t 5 /nobreak >nul
-echo        OK
+:: Esperar a que los servicios levanten
+echo Esperando que los servicios inicien...
+timeout /t 8 /nobreak >nul
 
-:: ── Abrir navegador ───────────────────────────────────────────────
 echo.
 echo ============================================================
-echo   Servicios en ejecucion:
+echo   Todo listo.
 echo.
-echo   Frontend:  http://localhost:5174
-echo   Backend:   http://localhost:5000
-echo   Health:    http://localhost:5000/api/v1/health
+echo   Aplicacion:  http://localhost:5174
+echo   Backend API: http://localhost:5000
 echo.
-echo   Para detener la aplicacion:
-echo   Cerrar las 3 ventanas de terminal (Celery, Backend, Frontend)
-echo   y la ventana de Redis minimizada en la barra de tareas.
+echo   Logs en:     %ROOT%logs\
+echo     - redis.log
+echo     - celery.log
+echo     - backend.log
+echo     - frontend.log
+echo.
+echo   Para detener los servicios usar: DETENER.bat
 echo ============================================================
 echo.
 
 timeout /t 2 /nobreak >nul
 start http://localhost:5174
 
-echo   Navegador abierto. Esta ventana puede cerrarse.
-echo.
+echo   Esta ventana puede cerrarse.
 pause
