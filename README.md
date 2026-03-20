@@ -1,225 +1,265 @@
-# 🎧 ENACOM Transcriptor de audios
+# ENACOM Transcriptor de Audios
 
-Sistema institucional de transcripción automática de audio a texto, desarrollado para la **Dirección Nacional de Control y Fiscalización de ENACOM**.
+Sistema institucional de transcripción automática de audio a texto desarrollado para la Dirección Nacional de Control y Fiscalización de ENACOM.
 
-Basado en [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (backend CTranslate2), con arquitectura desacoplada **Vue 3 + Flask + Celery + Redis**.
+El proyecto permite procesar archivos de audio de manera individual o en lote, detectar términos configurables de infracciones y generar salidas en TXT, XLSX, DOCX y ZIP. La solución cuenta con dos modalidades de operación:
 
----
+- modo desarrollo, con frontend Vue 3 y backend Flask + Celery + Redis
+- modo distribución standalone para Windows, empaquetado con PyInstaller e instalado mediante Inno Setup
 
-## ✨ Características
+## Objetivo
 
-- 🎙️ Transcripción con modelos Whisper **Medium** y **Large v3** seleccionables por el usuario
-- 📁 Soporte para múltiples formatos: MP3, WAV, M4A, OGG, FLAC, AAC, Opus, WebM
-- 📦 Modo **Individual** e **Informe Combinado (lote)**
-- ⚠️ Detección configurable de **infracciones** (términos prohibidos) con coincidencia exacta o parcial
-- 📊 Exportación a **TXT**, **XLSX** y **DOCX** por archivo y en lote
-- 📦 Generación de **ZIP** con todos los informes
-- 📡 Progreso en **tiempo real** vía WebSocket (Socket.IO)
-- 🎵 Reproductor de audio con **forma de onda** (WaveSurfer.js) sincronizado con la transcripción segmentada
-- 📚 **Historial** de transcripciones anteriores con descarga directa
-- 🏛️ Interfaz institucional con identidad visual ENACOM
+La aplicación fue diseñada para asistir tareas de fiscalización y análisis de material sonoro mediante una interfaz simple, resultados exportables y operación local dentro del entorno institucional.
 
----
+## Alcance funcional
 
-## 🏗️ Arquitectura
+- Transcripción automática de audio usando faster-whisper
+- Procesamiento de uno o varios archivos por corrida
+- Selección de idioma del audio: español, inglés, portugués o detección automática
+- Detección configurable de términos de infracciones
+- Generación de informes individuales o combinados
+- Exportación a TXT, XLSX y DOCX
+- Generación opcional de ZIP con la corrida completa
+- Historial local de transcripciones generadas
+- Reproducción del audio original junto a segmentos transcritos
+- Progreso en tiempo real durante el procesamiento
 
-```
-enacom-transcriptor-vue/
-├── backend/                  # Flask + Celery
+## Modalidades de ejecución
+
+### 1. Desarrollo
+
+Orientado al equipo técnico. Utiliza componentes desacoplados:
+
+- frontend en Vue 3 con Vite
+- backend Flask + Flask-SocketIO
+- ejecución de tareas con Celery
+- Redis como broker y backend de resultados
+
+Puertos por defecto:
+
+- frontend: http://127.0.0.1:5174
+- backend API: http://127.0.0.1:5000
+- health check: http://127.0.0.1:5000/api/v1/health
+
+### 2. Standalone para Windows
+
+Orientado a distribución interna. En esta modalidad:
+
+- el frontend buildado se sirve desde el mismo ejecutable
+- no se requiere Node.js, Redis ni un backend separado en la máquina usuaria
+- la aplicación se ejecuta como proceso único local
+- el instalador puede instalarse sin privilegios de administrador
+
+Punto de acceso por defecto en standalone:
+
+- aplicación local: http://127.0.0.1:5000
+
+## Arquitectura del repositorio
+
+```text
+enacom-transcriptor-audio/
+├── assets/                           # Iconografía e imágenes institucionales
+├── backend/
 │   ├── app/
-│   │   ├── api/              # REST endpoints + WebSockets
-│   │   ├── core/             # Motor de transcripción, exportadores, segmentador
-│   │   ├── models/           # Schemas Pydantic
-│   │   └── tasks/            # Tareas Celery
-│   ├── storage/              # uploads/ y outputs/ (generado en runtime)
-│   ├── assets/               # Logo y plantilla Word institucional
-│   ├── requirements.txt
-│   └── run.py
-├── frontend/                 # Vue 3 + Vite + Tailwind
-│   └── src/
-│       ├── components/       # Header, ConfigPanel, AudioCard, DownloadsPanel, etc.
-│       ├── stores/           # Pinia: estado de transcripción
-│       ├── services/         # api.js (Axios) + websocket.js (Socket.IO)
-│       └── utils/            # Formatters
-├── start-dev.sh              # Script de inicio de todos los servicios
-└── descargar_modelos.bat     # Descarga de modelos Whisper (Windows)
+│   │   ├── api/                      # Endpoints REST y WebSockets
+│   │   ├── core/                     # Lógica de transcripción, exportación y audio
+│   │   ├── models/                   # Schemas Pydantic
+│   │   └── tasks/                    # Tareas Celery y reemplazo standalone
+│   ├── run.py                        # Entry point de desarrollo
+│   ├── run_standalone.py             # Entry point del ejecutable standalone
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/               # Componentes UI
+│   │   ├── services/                 # API y WebSocket client
+│   │   ├── stores/                   # Estado de transcripción
+│   │   └── utils/
+│   └── package.json
+├── tools/
+│   ├── ffmpeg/                       # Binarios portables requeridos en standalone
+│   └── models/                       # Modelos Whisper locales para distribución
+├── ENACOM-Transcriptor-standalone.spec
+├── ENACOM-Transcriptor.iss
+├── INSTALACION.md
+└── MANUAL_DE_USO.md
 ```
 
----
+## Tecnologías principales
 
-## ⚙️ Requisitos previos
+### Backend
 
-| Herramienta | Versión mínima |
+- Flask
+- Flask-CORS
+- Flask-SocketIO
+- Celery
+- Redis
+- faster-whisper
+- CTranslate2
+- python-docx
+- openpyxl
+
+### Frontend
+
+- Vue 3
+- Vite 5
+- Pinia
+- Tailwind CSS
+- Axios
+- Socket.IO Client
+- WaveSurfer.js
+
+## Requisitos para desarrollo
+
+| Componente | Requisito mínimo |
 |---|---|
-| Python | 3.10+ |
-| Node.js | 18+ |
-| Redis | 6+ |
-| ffmpeg | Cualquier versión reciente |
+| Python | 3.10 o superior |
+| Node.js | 18 o superior |
+| Redis | 6 o superior |
+| Sistema operativo | Windows 10/11 o entorno compatible para desarrollo |
 
-> **Windows:** `ffmpeg` debe estar disponible en el PATH. Recomendado instalar vía [winget](https://github.com/microsoft/winget-cli): `winget install ffmpeg`.
+## Puesta en marcha en desarrollo
 
----
-
-## 🚀 Instalación
-
-### 1. Clonar el repositorio
-
-```bash
-git clone https://github.com/lucasnahuelmino/enacom-transcriptor-audio.git
-cd enacom-transcriptor-audio
-```
-
-### 2. Backend
+### Backend
 
 ```bash
 cd backend
 python -m venv venv
-
-# Windows
 venv\Scripts\activate
-
-# Linux / macOS
-source venv/bin/activate
-
 pip install -r requirements.txt
+python run.py
 ```
 
-> **Windows:** Si `av` (PyAV) falla al instalar, instalá primero las **Visual C++ Build Tools** desde https://visualstudio.microsoft.com/visual-cpp-build-tools/
+### Worker Celery
 
-### 3. Frontend
+```bash
+cd backend
+venv\Scripts\activate
+celery -A celery_worker.celery_app worker --loglevel=info --pool=solo
+```
+
+### Frontend
 
 ```bash
 cd frontend
 npm install
+npm run dev
 ```
 
-### 4. Descargar modelos Whisper
+### Redis
 
-```bash
-# Opción A — Windows (interfaz interactiva)
-descargar_modelos.bat
-
-# Opción B — Manual
-cd backend
-python download_models.py           # Descarga Medium (~1.5 GB)
-python download_models.py --large   # Descarga Medium + Large v3 (~4.6 GB)
-```
-
-Los modelos se almacenan en el cache de HuggingFace (`~/.cache/huggingface/hub`). La descarga solo es necesaria una vez por equipo y es reanudable si se interrumpe.
-
----
-
-## ▶️ Ejecución (modo desarrollo)
-
-### Opción A — Script unificado (Linux / Git Bash en Windows)
-
-```bash
-./start-dev.sh
-```
-
-Inicia Redis (si no está corriendo), Celery worker, Flask y Vite en una sola terminal.
-
-### Opción B — Terminales separadas
-
-**Terminal 1 — Redis**
 ```bash
 redis-server
 ```
 
-**Terminal 2 — Flask backend**
-```bash
-cd backend
-source venv/Scripts/activate   # Windows
-python run.py
-```
+## Flujo de empaquetado standalone
 
-**Terminal 3 — Celery worker**
-```bash
-cd backend
-source venv/Scripts/activate   # Windows
-celery -A celery_worker.celery_app worker --loglevel=info --pool=solo
-```
+El flujo actual de distribución para Windows es el siguiente.
 
-**Terminal 4 — Frontend Vite**
+### 1. Generar build del frontend
+
 ```bash
 cd frontend
-npm run dev
+npm install
+npm run build
 ```
 
-| Servicio | URL |
-|---|---|
-| Frontend | http://localhost:5174 |
-| Backend API | http://localhost:5000 |
-| Health check | http://localhost:5000/api/v1/health |
+Salida esperada:
 
----
+- frontend/dist/
 
-## 🖥️ Uso
+### 2. Generar ejecutable standalone con PyInstaller
 
-1. Abrí http://localhost:5174 en el navegador.
-2. **Seleccioná** uno o más archivos de audio (arrastrar y soltar o clic).
-3. Completá la **configuración**: referencia, idioma, modelo Whisper, modo de informe y términos de infracciones.
-4. Presioná **▶ Procesar**.
-5. Seguí el progreso en tiempo real. Al finalizar, descargá los informes por archivo o el ZIP completo.
+Desde la raíz del repositorio:
 
----
-
-## 📡 API REST (resumen)
-
-| Método | Endpoint | Descripción |
-|---|---|---|
-| `POST` | `/api/v1/transcription/upload` | Sube archivos e inicia tarea |
-| `GET` | `/api/v1/transcription/status/:id` | Estado de la tarea |
-| `GET` | `/api/v1/transcription/result/:id` | Resultado completo |
-| `POST` | `/api/v1/transcription/cancel/:id` | Cancela la tarea |
-| `GET` | `/api/v1/history` | Historial de transcripciones |
-| `GET` | `/api/v1/download/:path` | Descarga de archivos generados |
-| `GET` | `/api/v1/audio/:task_id/:filename` | Sirve el audio original |
-| `GET` | `/api/v1/health` | Estado del servicio |
-
----
-
-## 🔧 Configuración
-
-El backend se configura mediante variables de entorno o el archivo `backend/.env`:
-
-```env
-WHISPER_MODEL=medium           # medium | large-v3
-WHISPER_DEVICE=auto            # auto | cpu | cuda
-WHISPER_COMPUTE_TYPE=float16   # float16 | int8
-MAX_AUDIO_SIZE_MB=500
-SEGMENT_DURATION_SECONDS=20
-CELERY_BROKER_URL=redis://localhost:6379/0
-CELERY_RESULT_BACKEND=redis://localhost:6379/0
-REDIS_URL=redis://localhost:6379/1
+```bash
+pyinstaller ENACOM-Transcriptor-standalone.spec
 ```
 
----
+Salida esperada:
 
-## 🧱 Stack tecnológico
+- dist/ENACOM-Transcriptor/ENACOM-Transcriptor.exe
 
-**Backend**
-- [Flask](https://flask.palletsprojects.com/) + Flask-CORS + Flask-SocketIO
-- [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (CTranslate2)
-- [Celery](https://docs.celeryq.dev/) + Redis
-- [Pydantic v2](https://docs.pydantic.dev/)
-- python-docx, openpyxl
+### 3. Generar instalador con Inno Setup
 
-**Frontend**
-- [Vue 3](https://vuejs.org/) (Composition API)
-- [Vite 5](https://vitejs.dev/)
-- [Pinia](https://pinia.vuejs.org/)
-- [Tailwind CSS 3](https://tailwindcss.com/)
-- [Socket.IO client](https://socket.io/)
-- [WaveSurfer.js 7](https://wavesurfer.xyz/)
-- Axios
+Compilar:
 
----
+- ENACOM-Transcriptor.iss
 
-## 📝 Licencia
+El instalador resultante se genera en:
 
-Uso interno ENACOM. No distribuir sin autorización.
+- Output/ENACOM-Transcriptor-standalone-v3.0-Setup.exe
 
----
+## Comportamiento del instalador actual
 
-*Desarrollado por la Dirección Nacional de Control y Fiscalización — ENACOM*
+El instalador está configurado para:
+
+- instalar por usuario, sin requerir permisos de administrador
+- copiar el runtime standalone generado por PyInstaller
+- incluir tools/ffmpeg y tools/models
+- crear accesos directos en escritorio y menú inicio del usuario
+- usar una carpeta de instalación bajo LocalAppData
+
+Ruta por defecto de instalación:
+
+- %LOCALAPPDATA%/Programs/ENACOM/Transcriptor
+
+## Archivos de documentación del repositorio
+
+- README.md: visión institucional, técnica y de despliegue
+- INSTALACION.md: guía de instalación del paquete distribuible
+- MANUAL_DE_USO.md: manual de uso para personal operador
+
+## Estructura de resultados generados
+
+La aplicación almacena los archivos procesados y exportados en almacenamiento local. En standalone, estos directorios se crean junto al ejecutable instalado.
+
+- storage/uploads/
+- storage/outputs/
+
+Archivos exportables:
+
+- TXT: transcripción y texto corrido
+- XLSX: segmentos y detección de infracciones
+- DOCX: informe institucional formateado
+- ZIP: paquete completo de la corrida
+
+## Consideraciones operativas
+
+- La modalidad standalone utiliza el modelo local incluido en tools/models
+- El frontend standalone no depende de Vite ni de Node.js en tiempo de ejecución
+- El motor standalone sirve la interfaz directamente desde el ejecutable
+- La aplicación está orientada a uso local interno ENACOM
+
+## Solución de problemas frecuentes
+
+### La aplicación standalone no abre
+
+Verificar:
+
+- que el instalador haya copiado correctamente la carpeta completa
+- que no haya otra aplicación usando el puerto 5000
+- que existan tools/ffmpeg y tools/models dentro de la instalación
+
+### La aplicación de desarrollo no conecta con el backend
+
+Verificar:
+
+- frontend en puerto 5174
+- backend en puerto 5000
+- Redis activo
+- worker Celery corriendo
+
+### Error por archivos grandes o formatos no válidos
+
+Validar:
+
+- formato soportado: mp3, wav, m4a, ogg, flac, aac, opus, webm
+- tamaño máximo configurado en backend
+
+## Uso interno
+
+Este software es de uso interno ENACOM. No distribuir fuera del ámbito autorizado.
+
+## Autoría
+
+Desarrollado para la Dirección Nacional de Control y Fiscalización de ENACOM.

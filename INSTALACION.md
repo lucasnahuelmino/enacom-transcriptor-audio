@@ -1,186 +1,131 @@
-# ENACOM Transcriptor v3.0 — Guía de Instalación
+# ENACOM Transcriptor v3.0
 
-**Sistema de transcripción automática de audio a texto**  
-Dirección Nacional de Control y Fiscalización — ENACOM
+## Guía de instalación del paquete standalone
 
----
+Este documento describe la instalación de la versión distribuible para Windows del sistema ENACOM Transcriptor.
 
-## Requisitos del equipo
+La versión actual se instala mediante un ejecutable generado con Inno Setup y despliega una aplicación standalone que no requiere instalar por separado Python, Node.js o Redis en el equipo usuario.
 
-| Componente | Mínimo requerido |
+## Requisitos mínimos del equipo
+
+| Componente | Requisito |
 |---|---|
-| Sistema operativo | Windows 10 / 11 (64 bits) |
-| RAM | 8 GB (recomendado 16 GB) |
-| Almacenamiento libre | 10 GB |
-| Python | 3.10 o superior |
-| Node.js | 18 o superior |
-| Conexión a internet | No requerida después de instalar |
+| Sistema operativo | Windows 10 o Windows 11 de 64 bits |
+| Memoria RAM | 8 GB mínimo, 16 GB recomendado |
+| Espacio libre en disco | 8 GB o superior |
+| Permisos de usuario | Usuario estándar |
 
-> **Nota sobre Python y Node.js:** si no están instalados, ver la sección [Instalación de requisitos previos](#instalación-de-requisitos-previos) al final de este documento.
+## Características de la instalación
 
----
+La instalación actual:
 
-## Estructura del paquete
+- no requiere permisos de administrador
+- se instala por usuario
+- utiliza carpeta de instalación bajo el perfil local del usuario
+- crea accesos directos opcionales en escritorio y menú inicio
+- incluye ejecutable, frontend buildado, ffmpeg portable y modelos locales
 
-Al descomprimir el ZIP, la carpeta tiene la siguiente estructura:
+Ruta por defecto de instalación:
 
-```
-enacom-transcriptor-audio/
-│
-├── INSTALAR.bat          ← Ejecutar UNA SOLA VEZ
-├── INICIAR.bat           ← Uso diario (doble clic para arrancar)
-├── EMPAQUETAR.bat        ← Solo para el área técnica
-├── INSTALACION.md        ← Este archivo
-│
-├── tools/
-│   ├── ffmpeg/bin/       ← ffmpeg portable (incluido)
-│   ├── redis/            ← Redis portable (incluido)
-│   └── models/
-│       └── faster-whisper-large/  ← Modelo Whisper large-v3 (incluido)
-│
-├── backend/              ← Servidor Flask + Celery
-└── frontend/             ← Interfaz Vue.js
+```text
+%LOCALAPPDATA%\Programs\ENACOM\Transcriptor
 ```
 
-> Los modelos, ffmpeg y Redis ya están incluidos en el paquete. **No se necesita descargar nada adicional ni tener conexión a internet.**
+## Instalación paso a paso
 
----
+### 1. Ejecutar el instalador
 
-## Instalación (primera vez)
+Abrir el archivo:
 
-### Paso 1 — Descomprimir el paquete
-
-Descomprimir el ZIP en una ubicación accesible, por ejemplo:
-
-```
-C:\ENACOM\enacom-transcriptor-audio\
+```text
+ENACOM-Transcriptor-standalone-v3.0-Setup.exe
 ```
 
-> **Importante:** evitar rutas con espacios o caracteres especiales (acentos, ñ, etc.) como `C:\Mis Documentos\`.
+### 2. Seleccionar carpeta de destino
 
----
+Se recomienda mantener la ruta propuesta por defecto. Si el área técnica lo requiere, puede elegirse otra carpeta dentro del perfil del usuario.
 
-### Paso 2 — Ejecutar INSTALAR.bat
+### 3. Elegir accesos directos
 
-Hacer doble clic en **`INSTALAR.bat`** y seguir las instrucciones en pantalla.
+El instalador permite:
 
-Este script realiza automáticamente:
-1. Verifica que Python y Node.js estén instalados
-2. Crea el entorno virtual Python en `backend\venv\`
-3. Instala todas las dependencias Python
-4. Instala las dependencias Node.js en `frontend\node_modules\`
+- crear acceso directo en escritorio
+- crear acceso directo en menú inicio
 
-⏱ **Tiempo estimado:** 5 a 10 minutos (depende del equipo).
+### 4. Finalizar instalación
 
-> Ejecutar **una sola vez por equipo**. No es necesario repetirlo en usos posteriores.
+Al terminar, se puede iniciar la aplicación desde el instalador o desde los accesos directos generados.
 
----
+## Qué instala el paquete
 
-## Uso diario
+La instalación despliega como mínimo los siguientes elementos:
 
-### Iniciar la aplicación
+- ejecutable principal ENACOM-Transcriptor.exe
+- recursos del frontend ya compilado
+- binarios ffmpeg y ffprobe portables
+- modelos Whisper locales
+- carpeta de almacenamiento local para uploads y outputs
+- carpeta de logs
 
-Hacer doble clic en **`INICIAR.bat`**.
+## Primer inicio
 
-El script abre automáticamente 3 ventanas de terminal (Celery, Backend y Frontend), inicia Redis en segundo plano, y abre el navegador en:
+Al iniciar la aplicación:
 
+- el sistema levanta un servicio local en el equipo usuario
+- abre automáticamente el navegador en http://127.0.0.1:5000
+- crea, si no existen, las carpetas locales de trabajo
+
+## Carpetas operativas creadas por la aplicación
+
+Dentro de la carpeta de instalación se crean o utilizan:
+
+```text
+storage\uploads
+storage\outputs
+logs
 ```
-http://localhost:5174
-```
 
-> Si el navegador no se abre solo, escribir esa dirección manualmente.
+## Desinstalación
 
----
+La desinstalación puede realizarse desde:
 
-### Detener la aplicación
+- menú inicio
+- aplicaciones instaladas de Windows
+- desinstalador incluido por Inno Setup
 
-Cerrar las **3 ventanas de terminal** que se abrieron (identificadas como "Celery - ENACOM", "Backend - ENACOM" y "Frontend - ENACOM") y la ventana minimizada de Redis en la barra de tareas.
+La confirmación de desinstalación informa que los archivos almacenados en storage pueden permanecer en disco.
 
----
+## Validaciones realizadas por el instalador
 
-## Flujo de trabajo
+El instalador verifica:
 
-1. **Seleccionar archivos** de audio (arrastrar y soltar, o clic para explorar)  
-   — Formatos soportados: MP3, WAV, M4A, OGG, FLAC, AAC, Opus, WebM  
-   — Tamaño máximo por archivo: 500 MB
+- compatibilidad con Windows de 64 bits
 
-2. **Completar la configuración:**
-   - Nombre / Referencia del expediente
-   - Idioma del audio (Español por defecto)
-   - Modo de informe: Individual o Combinado (lote)
-   - Términos de infracciones a detectar (separados por coma)
+## Problemas frecuentes
 
-3. Hacer clic en **▶ Procesar**
+### El instalador no inicia
 
-4. **Seguir el progreso** en tiempo real. Al finalizar, descargar los informes individuales (TXT, XLSX, DOCX) o el ZIP completo.
+Verificar que el archivo no haya sido bloqueado por el sistema o por herramientas de seguridad corporativas.
 
----
+### La aplicación no abre luego de instalar
 
-## Descripción de los archivos generados
+Verificar:
 
-| Formato | Contenido |
-|---|---|
-| **TXT** | Transcripción con timestamps + texto completo + resumen de infracciones |
-| **XLSX** | Tabla de segmentos (Inicio / Fin / Texto) + hoja de infracciones |
-| **DOCX** | Informe institucional ENACOM con formato Word |
-| **ZIP** | Todos los archivos anteriores comprimidos en un solo paquete |
+- que la instalación haya concluido correctamente
+- que no exista otro proceso ocupando el puerto 5000
+- que la carpeta de instalación contenga tools/ffmpeg y tools/models
 
----
+### El equipo no permite instalar en Program Files
 
-## Solución de problemas frecuentes
+La versión actual ya no utiliza Program Files y está preparada para instalarse con usuario estándar.
 
-### La aplicación no abre en el navegador
+## Soporte interno
 
-Verificar que las 3 ventanas de terminal no muestren errores en rojo. Esperar 10 segundos adicionales y navegar manualmente a `http://localhost:5174`.
+Para validación funcional y soporte técnico, utilizar la documentación complementaria del repositorio:
 
-### Error "Puerto 5000 en uso"
+- README.md
+- MANUAL_DE_USO.md
 
-Otro proceso está usando el puerto 5000. Abrir el Administrador de tareas, buscar procesos Python o Flask y cerrarlos antes de volver a ejecutar `INICIAR.bat`.
+## Uso interno
 
-### Error "Puerto 6379 en uso"
-
-Redis ya está corriendo (de una sesión anterior). No es un error; la aplicación funcionará igualmente.
-
-### La transcripción tarda mucho
-
-El modelo Whisper large-v3 es de alta precisión pero requiere tiempo. Para archivos largos (más de 30 minutos de audio), la transcripción puede demorar tanto o más que la duración del audio en equipos sin GPU dedicada.
-
-### Error en INSTALAR.bat: "Python no encontrado"
-
-Python no está en el PATH del sistema. Ver la sección siguiente.
-
----
-
-## Instalación de requisitos previos
-
-### Python 3.10+
-
-1. Descargar desde [https://www.python.org/downloads/](https://www.python.org/downloads/)
-2. Durante la instalación, **marcar la casilla "Add Python to PATH"**
-3. Completar la instalación y reiniciar el equipo
-4. Volver a ejecutar `INSTALAR.bat`
-
-### Node.js 18+
-
-1. Descargar desde [https://nodejs.org/](https://nodejs.org/) (versión LTS recomendada)
-2. Instalar con las opciones por defecto
-3. Reiniciar el equipo
-4. Volver a ejecutar `INSTALAR.bat`
-
----
-
-## Información técnica
-
-| Componente | Tecnología |
-|---|---|
-| Motor de transcripción | faster-whisper (CTranslate2) — modelo large-v3 |
-| Backend | Flask 3.0 + Celery 5.3 + Redis 6 |
-| Frontend | Vue 3.4 + Vite 5 + Tailwind CSS |
-| Comunicación en tiempo real | Socket.IO |
-| Reproductor de audio | WaveSurfer.js 7 |
-| Exportación | python-docx + openpyxl |
-
----
-
-*Desarrollado por la Dirección Nacional de Control y Fiscalización — ENACOM*  
-*Versión 3.0 — Marzo 2026*
+Documento de uso interno ENACOM.
