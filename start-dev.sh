@@ -123,7 +123,7 @@ log "Iniciando Celery worker..."
 (
     cd "$BACKEND_DIR"
     source venv/Scripts/activate 2>/dev/null || source venv/bin/activate
-    celery -A celery_worker.celery_app worker --loglevel=warning --concurrency=2 \
+    celery -A celery_worker.celery_app worker --loglevel=info --pool=solo \
         > "$REPO_ROOT/logs/celery.log" 2>&1
 ) &
 CELERY_PID=$!

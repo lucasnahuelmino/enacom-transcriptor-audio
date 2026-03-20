@@ -23,7 +23,21 @@ tools/ffmpeg/
 dump.rdb
 
 # Inno Setup output
+Output/
 
+# Build artifacts (frontend/backend/standalone)
+dist/
+build/
+backend/dist/
+backend/build/
+frontend/dist/
+
+# PyInstaller runtime/build caches
+backend/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+
+# Inno Setup output
 Output/
 
 # Assets de compilación (no subir al repo)
