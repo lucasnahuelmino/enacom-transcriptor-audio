@@ -92,5 +92,45 @@ export default {
   async healthCheck() {
     const response = await apiClient.get('/health')
     return response.data
+  },
+
+  async getSignalStatus() {
+    const response = await apiClient.get('/signal/status')
+    return response.data
+  },
+
+  async startSignalMonitor(payload) {
+    const response = await apiClient.post('/signal/start', payload)
+    return response.data
+  },
+
+  async stopSignalMonitor() {
+    const response = await apiClient.post('/signal/stop')
+    return response.data
+  },
+
+  async updateSignalConfig(payload) {
+    const response = await apiClient.post('/signal/config', payload)
+    return response.data
+  },
+
+  async startSignalRecording(payload = {}) {
+    const response = await apiClient.post('/signal/record/start', payload)
+    return response.data
+  },
+
+  async stopSignalRecording() {
+    const response = await apiClient.post('/signal/record/stop')
+    return response.data
+  },
+
+  async toggleSignalTranscription(enabled) {
+    const response = await apiClient.post('/signal/transcription/toggle', { enabled })
+    return response.data
+  },
+
+  async updateSignalActivityConfig(payload) {
+    const response = await apiClient.post('/signal/activity/config', payload)
+    return response.data
   }
 }

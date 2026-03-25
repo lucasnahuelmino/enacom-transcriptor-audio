@@ -12,11 +12,22 @@ import datetime as _dt
 
 from app.config import settings
 from app.models.schemas import TranscriptionRequest
+from app.signal_monitor import signal_monitor_service
+from app.signal_monitor.schemas import (
+    SignalMonitorRecordingRequest,
+    SignalMonitorStartRequest,
+    SignalMonitorTranscriptionToggleRequest,
+    SignalMonitorUpdateRequest,
+)
 from app.tasks.celery_tasks import process_transcription_task
 
 logger = logging.getLogger(__name__)
 
 api_bp = Blueprint('api', __name__)
+
+
+def _json_or_empty():
+    return request.get_json(silent=True) or {}
 
 
 @api_bp.route('/transcription/upload', methods=['POST'])
@@ -256,6 +267,86 @@ def download_file(filename: str):
 
     except Exception as e:
         logger.error(f"Error descargando archivo: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/status', methods=['GET'])
+def signal_status():
+    try:
+        return jsonify(signal_monitor_service.status())
+    except Exception as e:
+        logger.error(f"Error obteniendo estado del monitor: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/start', methods=['POST'])
+def signal_start():
+    try:
+        payload = SignalMonitorStartRequest(**_json_or_empty())
+        status = signal_monitor_service.start(payload.model_dump(exclude={'preferred_mode'}), payload.preferred_mode or 'auto')
+        return jsonify(status)
+    except Exception as e:
+        logger.error(f"Error iniciando monitor de señal: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/stop', methods=['POST'])
+def signal_stop():
+    try:
+        return jsonify(signal_monitor_service.stop())
+    except Exception as e:
+        logger.error(f"Error deteniendo monitor de señal: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/config', methods=['POST'])
+def signal_config():
+    try:
+        payload = SignalMonitorUpdateRequest(**_json_or_empty())
+        return jsonify(signal_monitor_service.update_config(payload.model_dump(exclude_none=True)))
+    except Exception as e:
+        logger.error(f"Error actualizando configuración del monitor: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/record/start', methods=['POST'])
+def signal_record_start():
+    try:
+        payload = SignalMonitorRecordingRequest(**_json_or_empty())
+        return jsonify(signal_monitor_service.start_recording(payload.session_name))
+    except Exception as e:
+        logger.error(f"Error iniciando grabación del monitor: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/record/stop', methods=['POST'])
+def signal_record_stop():
+    try:
+        return jsonify(signal_monitor_service.stop_recording())
+    except Exception as e:
+        logger.error(f"Error deteniendo grabación del monitor: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/transcription/toggle', methods=['POST'])
+def signal_transcription_toggle():
+    try:
+        payload = SignalMonitorTranscriptionToggleRequest(**_json_or_empty())
+        return jsonify(signal_monitor_service.toggle_transcription(payload.enabled))
+    except Exception as e:
+        logger.error(f"Error actualizando transcripción en vivo: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/signal/activity/config', methods=['POST'])
+def signal_activity_config():
+    try:
+        payload = _json_or_empty()
+        return jsonify(signal_monitor_service.update_config({
+            'activity_detection': payload
+        }))
+    except Exception as e:
+        logger.error(f"Error actualizando configuración de actividad: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 

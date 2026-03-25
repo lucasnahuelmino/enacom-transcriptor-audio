@@ -1,109 +1,57 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(0,102,204,0.12),_transparent_34%),linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <Header />
 
-      <!-- Panel de configuración -->
-      <ConfigPanel
-        @start="handleStartTranscription"
-        :disabled="store.isProcessing"
-      />
+      <nav class="mb-6 rounded-enacom border border-white/70 bg-white/80 backdrop-blur shadow-enacom-sm p-2 flex flex-wrap gap-2">
+        <button class="module-link" :class="currentView === 'transcription' ? 'module-link-active' : ''" @click="setView('transcription')">Transcriptor</button>
+        <button class="module-link" :class="currentView === 'signal-monitor' ? 'module-link-active' : ''" @click="setView('signal-monitor')">Live Signal Monitor</button>
+      </nav>
 
-      <!-- Barra de progreso + Cancelar -->
-      <div v-if="store.isProcessing" class="relative">
-        <ProgressBar
-          :progress="store.progress"
-          :current-file="store.currentFile"
-          :current-index="store.currentFileIndex"
-          :total-files="store.totalFiles"
-          :message="store.statusMessage"
-        />
-        <button
-          @click="handleCancel"
-          class="absolute top-30 right-1 inline-flex items-center gap-1.5 px-3 py-1.5
-                 bg-red-50 border border-red-300 hover:bg-red-100
-                 text-red-600 text-sm font-semibold rounded-lg transition-all"
-          title="Cancelar transcripción"
-        >
-          ✕ Cancelar
-        </button>
-      </div>
-
-      <!-- Vista de transcripción en vivo -->
-      <TranscriptionView v-if="store.isProcessing" />
-
-      <!-- Panel de descargas -->
-      <DownloadsPanel
-        v-if="store.hasResults"
-        @clear="handleClear"
-      />
-
-      <!-- Error -->
-      <div
-        v-if="store.taskStatus === 'failed'"
-        class="card mb-6 border-l-4 border-red-500 bg-red-50"
-      >
-        <div class="flex items-center gap-3">
-          <span class="text-2xl">❌</span>
-          <div>
-            <p class="font-bold text-red-700">Error en la transcripción</p>
-            <p class="text-sm text-red-600 mt-1">{{ store.statusMessage || 'Ocurrió un error inesperado. Revisá los logs del backend.' }}</p>
-          </div>
-          <button
-            @click="store.reset()"
-            class="ml-auto text-sm text-red-600 hover:text-red-800 font-semibold underline"
-          >
-            Reiniciar
-          </button>
-        </div>
-      </div>
-
-      <!-- Panel de historial -->
-      <HistoryPanel class="mt-6" />
+      <component :is="activeComponent" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
-import { useTranscriptionStore } from '@/stores/transcription'
-import websocket from '@/services/websocket'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import Header from '@/components/Header.vue'
-import ConfigPanel from '@/components/ConfigPanel.vue'
-import ProgressBar from '@/components/ProgressBar.vue'
-import TranscriptionView from '@/components/TranscriptionView.vue'
-import DownloadsPanel from '@/components/DownloadsPanel.vue'
-import HistoryPanel from '@/components/HistoryPanel.vue'
+import websocket from '@/services/websocket'
+import SignalMonitor from '@/views/SignalMonitor.vue'
+import TranscriptionWorkspace from '@/views/TranscriptionWorkspace.vue'
 
-const store = useTranscriptionStore()
+const currentView = ref(window.location.pathname.includes('signal-monitor') ? 'signal-monitor' : 'transcription')
 
-async function handleStartTranscription({ files, config }) {
-  try {
-    await store.uploadAndStart(files, config)
-  } catch (error) {
-    console.error('Error iniciando transcripción:', error)
-    alert('Error al iniciar transcripción: ' + (error.response?.data?.error || error.message))
-  }
-}
+const activeComponent = computed(() => {
+  return currentView.value === 'signal-monitor' ? SignalMonitor : TranscriptionWorkspace
+})
 
-async function handleCancel() {
-  if (!confirm('¿Cancelar la transcripción en curso?')) return
-  await store.cancelTask()
-}
-
-function handleClear() {
-  if (confirm('¿Limpiar los resultados actuales?')) {
-    store.reset()
-  }
+function setView(viewName) {
+  currentView.value = viewName
+  const nextPath = viewName === 'signal-monitor' ? '/signal-monitor' : '/'
+  window.history.replaceState({}, '', nextPath)
 }
 
 onMounted(() => {
   websocket.connect()
-  store.loadHistory()
 })
 
 onUnmounted(() => {
   websocket.disconnect()
 })
 </script>
+
+<style scoped>
+.module-link {
+  @apply px-4 py-2.5 rounded-enacom-sm text-sm font-bold text-slate-600 transition-all;
+}
+
+.module-link:hover {
+  @apply bg-slate-100 text-slate-900;
+}
+
+.module-link-active {
+  @apply bg-gradient-to-r from-enacom-blue-dark to-enacom-blue-main text-white shadow-enacom-blue;
+}
+</style>
